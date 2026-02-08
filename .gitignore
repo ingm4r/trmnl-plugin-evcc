@@ -1,0 +1,38 @@
+# TRMNL Plugin Development
+.trmnlp/
+*.html
+
+# Environment and secrets
+.env
+.env.local
+*.secret
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-*
+
+# Ruby
+*.gem
+.bundle/
+vendor/bundle/
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Collector config (contains secrets)
+collector/config.yaml
+
+# Python
+__pycache__/

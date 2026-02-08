@@ -1,0 +1,187 @@
+{% comment %}
+  Quadrant Layout (400x240)
+  EVCC Solar Charging - Minimal summary view
+  Top: Hero PV power | Middle: First loadpoint one-liner | Bottom: Mini stat boxes
+{% endcomment %}
+
+{% assign show_energy = trmnl.plugin_settings.custom_fields_values.show_energy_overview | default: "yes" | downcase %}
+{% assign show_battery = trmnl.plugin_settings.custom_fields_values.show_battery | default: "yes" | downcase %}
+{% assign show_loadpoints = trmnl.plugin_settings.custom_fields_values.show_loadpoints | default: "yes" | downcase %}
+{% assign max_lps = trmnl.plugin_settings.custom_fields_values.max_loadpoints | default: 2 | plus: 0 %}
+{% assign show_vehicle = trmnl.plugin_settings.custom_fields_values.show_vehicle_details | default: "yes" | downcase %}
+{% assign show_stats = trmnl.plugin_settings.custom_fields_values.show_statistics | default: "no" | downcase %}
+{% assign show_tariff = trmnl.plugin_settings.custom_fields_values.show_tariff | default: "no" | downcase %}
+
+{% comment %} SVG Icons (14x14 inline) {% endcomment %}
+{%- capture icon_solar -%}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>{%- endcapture -%}
+{%- capture icon_solar_lg -%}<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>{%- endcapture -%}
+{%- capture icon_grid -%}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>{%- endcapture -%}
+{%- capture icon_home -%}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>{%- endcapture -%}
+{%- capture icon_battery -%}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>{%- endcapture -%}
+{%- capture icon_car -%}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-3h8l2 3h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/></svg>{%- endcapture -%}
+{%- capture icon_leaf -%}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20c4 0 8.68-3.9 12-12"/><path d="M2 2s7.45 3.89 8 10"/></svg>{%- endcapture -%}
+
+<style>
+  .evcc-quad {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    height: 190px;
+    box-sizing: border-box;
+  }
+  .evcc-quad .evcc-hero {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+  }
+  .evcc-quad .evcc-hero-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .evcc-quad .evcc-hero-value {
+    font-family: 'DepartureMono', monospace;
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 1;
+  }
+  .evcc-quad .evcc-hero-label {
+    font-family: 'DepartureMono', monospace;
+    font-size: 10px;
+    color: #333;
+    margin-left: 4px;
+  }
+  .evcc-quad .evcc-lp-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DepartureMono', monospace;
+    font-size: 12px;
+    padding: 4px 8px;
+    border: 2px solid black;
+    border-radius: 6px;
+    background: white;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .evcc-quad .evcc-lp-name {
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .evcc-quad .evcc-lp-status {
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .evcc-quad .evcc-lp-power {
+    margin-left: auto;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  .evcc-quad .evcc-stats-row {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    margin-top: auto;
+  }
+  .evcc-quad .evcc-stat-mini {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    flex: 1;
+  }
+  .evcc-quad .evcc-stat-mini-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .evcc-quad .evcc-stat-mini-value {
+    font-family: 'DepartureMono', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+  }
+  .evcc-quad .evcc-stat-mini-label {
+    font-family: 'DepartureMono', monospace;
+    font-size: 8px;
+    color: #333;
+  }
+  .evcc-quad .evcc-empty {
+    font-family: 'DepartureMono', monospace;
+    font-size: 10px;
+    color: #666;
+  }
+</style>
+
+<div class="evcc-quad">
+
+  <!-- Top: Hero PV Power -->
+  <div class="evcc-hero">
+    <span class="evcc-hero-icon">{{ icon_solar_lg }}</span>
+    <span class="evcc-hero-value">{{ energy.pv_power_formatted | default: "-- W" }}</span>
+    <span class="evcc-hero-label">Solar</span>
+  </div>
+
+  <!-- Middle: First Loadpoint One-liner -->
+  {% if show_loadpoints == "yes" %}
+  <div class="evcc-lp-line">
+    {% if loadpoints and loadpoints.size > 0 %}
+      {% assign lp = loadpoints | first %}
+      <span class="evcc-stat-mini-icon">{{ icon_car }}</span>
+      <span class="evcc-lp-name">{{ lp.title | default: "Loadpoint" | truncate: 14 }}:</span>
+      {% if lp.charging %}
+        <span class="evcc-lp-status">Charging</span>
+        <span class="evcc-lp-power">{{ lp.charge_power_formatted | default: "--" }}</span>
+      {% else %}
+        <span class="evcc-lp-status">{{ lp.status | default: "Disconnected" | truncate: 18 }}</span>
+      {% endif %}
+    {% else %}
+      <span class="evcc-empty">No loadpoints</span>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Bottom: Mini Stat Boxes -->
+  <div class="evcc-stats-row">
+    <div class="evcc-stat-mini">
+      <span class="evcc-stat-mini-icon">{{ icon_grid }}</span>
+      <span class="evcc-stat-mini-value">{{ energy.grid_power_formatted | default: "--" }}</span>
+      <span class="evcc-stat-mini-label">Grid</span>
+    </div>
+    <div class="evcc-stat-mini">
+      <span class="evcc-stat-mini-icon">{{ icon_home }}</span>
+      <span class="evcc-stat-mini-value">{{ energy.home_power_formatted | default: "--" }}</span>
+      <span class="evcc-stat-mini-label">Home</span>
+    </div>
+    {% if show_battery == "yes" and battery.configured %}
+    <div class="evcc-stat-mini">
+      <span class="evcc-stat-mini-icon">{{ icon_battery }}</span>
+      <span class="evcc-stat-mini-value">{{ battery.soc | default: 0 }}%</span>
+      <span class="evcc-stat-mini-label">Battery</span>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<div class="title_bar">
+  <span class="title">
+    {{ icon_solar }} EVCC
+  </span>
+  <span class="instance">
+    {% if last_updated %}
+      {{ last_updated | date: "%s" | plus: trmnl.user.utc_offset | date: "%Y-%m-%d %H:%M" }} {{ timezone }}
+    {% else %}
+      --:--
+    {% endif %}
+  </span>
+</div>

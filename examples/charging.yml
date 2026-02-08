@@ -1,0 +1,98 @@
+# EVCC Active Charging Test Data
+# Both loadpoints actively charging with good solar production
+# Copy variables section to .trmnlp.yml for testing
+
+custom_fields:
+  show_energy_overview: "yes"
+  show_battery: "yes"
+  show_loadpoints: "yes"
+  max_loadpoints: 2
+  show_vehicle_details: "yes"
+  show_statistics: "no"
+  show_tariff: "no"
+
+variables:
+  site_title: My Home
+  last_updated: "2026-06-15T12:00:00Z"
+  last_updated_local: "2026-06-15 14:00"
+  timezone: CEST
+  currency: EUR
+
+  energy:
+    pv_power: 8750
+    pv_power_formatted: "8.8 kW"
+    grid_power: -1200
+    grid_power_formatted: "1.2 kW"
+    grid_import: false
+    home_power: 850
+    home_power_formatted: "850 W"
+    green_share_home: 100
+    tariff_grid: 0.28
+    tariff_feedin: 0.08
+    tariff_price_home: 0.00
+
+  battery:
+    configured: true
+    soc: 95
+    power: -200
+    power_formatted: "200 W"
+    charging: false
+
+  loadpoints:
+    - title: Garage
+      mode: pv
+      mode_label: "Solar"
+      charging: true
+      connected: true
+      enabled: true
+      status: Charging
+      charge_power: 4600
+      charge_power_formatted: "4.6 kW"
+      charged_energy_kwh: 8.2
+      charge_duration_formatted: "1:47h"
+      charge_remaining_formatted: "3:10h"
+      session_solar_pct: 100
+      session_price: 0.00
+      vehicle_title: "ID.4"
+      vehicle_soc: 45
+      vehicle_range: 185
+      vehicle_connected: true
+      limit_soc: 80
+      plan_active: false
+      plan_time: null
+      phases_active: 3
+
+    - title: Stellplatz
+      mode: pv
+      mode_label: "Solar"
+      charging: true
+      connected: true
+      enabled: true
+      status: Charging
+      charge_power: 3300
+      charge_power_formatted: "3.3 kW"
+      charged_energy_kwh: 5.6
+      charge_duration_formatted: "1:12h"
+      charge_remaining_formatted: "4:20h"
+      session_solar_pct: 100
+      session_price: 0.00
+      vehicle_title: "EQS SUV"
+      vehicle_soc: 38
+      vehicle_range: 190
+      vehicle_connected: true
+      limit_soc: 80
+      plan_active: false
+      plan_time: null
+      phases_active: 1
+
+  loadpoint_count: 2
+
+  statistics:
+    30d:
+      charged_kwh: 312.4
+      solar_pct: 92
+      avg_price: 0.02
+    total:
+      charged_kwh: 2105.7
+      solar_pct: 84
+      avg_price: 0.06

@@ -1,0 +1,94 @@
+custom_fields:
+  show_energy_overview: "yes"
+  show_battery: "yes"
+  show_loadpoints: "yes"
+  max_loadpoints: 2
+  show_vehicle_details: "yes"
+  show_statistics: "no"
+  show_tariff: "no"
+
+variables:
+  site_title: My Home
+  last_updated: "2026-02-08T15:30:00Z"
+  last_updated_local: "2026-02-08 16:30"
+  timezone: CET
+  currency: EUR
+
+  energy:
+    pv_power: 2340
+    pv_power_formatted: "2.3 kW"
+    grid_power: 420
+    grid_power_formatted: "420 W"
+    grid_import: true
+    home_power: 2760
+    home_power_formatted: "2.8 kW"
+    green_share_home: 85
+    tariff_grid: 0.28
+    tariff_feedin: 0.08
+    tariff_price_home: 0.12
+
+  battery:
+    configured: true
+    soc: 72
+    power: -850
+    power_formatted: "850 W"
+    charging: false
+
+  loadpoints:
+    - title: Garage
+      mode: "off"
+      mode_label: "Off"
+      charging: false
+      connected: false
+      enabled: false
+      status: Disconnected
+      charge_power: 0
+      charge_power_formatted: "0 W"
+      charged_energy_kwh: 0
+      charge_duration_formatted: ""
+      charge_remaining_formatted: ""
+      session_solar_pct: 0
+      session_price: 0
+      vehicle_title: ""
+      vehicle_soc: 0
+      vehicle_range: 0
+      vehicle_connected: false
+      limit_soc: 80
+      plan_active: false
+      plan_time: null
+      phases_active: 0
+
+    - title: Stellplatz
+      mode: minpv
+      mode_label: "Min+Solar"
+      charging: true
+      connected: true
+      enabled: true
+      status: Charging
+      charge_power: 3680
+      charge_power_formatted: "3.7 kW"
+      charged_energy_kwh: 12.4
+      charge_duration_formatted: "2:44h"
+      charge_remaining_formatted: "1:30h"
+      session_solar_pct: 85
+      session_price: 0.93
+      vehicle_title: "EQS SUV"
+      vehicle_soc: 62
+      vehicle_range: 317
+      vehicle_connected: true
+      limit_soc: 80
+      plan_active: false
+      plan_time: null
+      phases_active: 1
+
+  loadpoint_count: 2
+
+  statistics:
+    30d:
+      charged_kwh: 245.8
+      solar_pct: 78
+      avg_price: 0.09
+    total:
+      charged_kwh: 1847.3
+      solar_pct: 82
+      avg_price: 0.07

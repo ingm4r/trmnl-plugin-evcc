@@ -1,0 +1,16 @@
+# TRMNL EVCC Collector
+# Pre-built image from GitHub Container Registry
+services:
+  trmnl-evcc-collector:
+    image: ghcr.io/ingm4r/trmnl-evcc-collector:latest
+    container_name: trmnl-evcc-collector
+    restart: unless-stopped
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - TZ=Europe/Berlin
+    # Uncomment for Terminus/BYOS HTTP serve mode:
+    # environment:
+    #   - SERVE_PORT=8080
+    # ports:
+    #   - "8080:8080"

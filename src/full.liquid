@@ -1,0 +1,519 @@
+{% comment %}
+  Full Layout (800x480) - EVCC Solar Charging Dashboard
+  Displays: Energy overview, battery status, EV charging loadpoints
+  Screen: 800x480 1-bit e-ink (TRMNL)
+{% endcomment %}
+
+{% assign show_energy = trmnl.plugin_settings.custom_fields_values.show_energy_overview | default: "yes" | downcase %}
+{% assign show_battery = trmnl.plugin_settings.custom_fields_values.show_battery | default: "yes" | downcase %}
+{% assign show_loadpoints = trmnl.plugin_settings.custom_fields_values.show_loadpoints | default: "yes" | downcase %}
+{% assign max_lps = trmnl.plugin_settings.custom_fields_values.max_loadpoints | default: 2 | plus: 0 %}
+{% assign show_vehicle = trmnl.plugin_settings.custom_fields_values.show_vehicle_details | default: "yes" | downcase %}
+{% assign show_stats = trmnl.plugin_settings.custom_fields_values.show_statistics | default: "no" | downcase %}
+{% assign show_tariff = trmnl.plugin_settings.custom_fields_values.show_tariff | default: "no" | downcase %}
+
+{% comment %} SVG Icons (16x16, stroke-based, monochrome) {% endcomment %}
+{%- capture icon_solar -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>{%- endcapture -%}
+{%- capture icon_grid -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>{%- endcapture -%}
+{%- capture icon_home -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>{%- endcapture -%}
+{%- capture icon_battery -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>{%- endcapture -%}
+{%- capture icon_car -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-3h8l2 3h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/></svg>{%- endcapture -%}
+{%- capture icon_bolt -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>{%- endcapture -%}
+{%- capture icon_leaf -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75"/></svg>{%- endcapture -%}
+{%- capture icon_clock -%}<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>{%- endcapture -%}
+
+{% comment %} Pre-compute layout flags {% endcomment %}
+{% assign has_energy = false %}
+{% if show_energy == "yes" %}{% assign has_energy = true %}{% endif %}
+{% assign has_battery = false %}
+{% if show_battery == "yes" and battery.configured %}{% assign has_battery = true %}{% endif %}
+{% assign has_loadpoints = false %}
+{% if show_loadpoints == "yes" and loadpoint_count > 0 %}{% assign has_loadpoints = true %}{% endif %}
+{% assign has_stats = false %}
+{% if show_stats == "yes" and statistics %}{% assign has_stats = true %}{% endif %}
+
+<style>
+  /* ===== EVCC FULL LAYOUT ===== */
+  .evcc-full {
+    display: flex;
+    flex-direction: column;
+    height: 430px;
+    padding: 12px 16px;
+    box-sizing: border-box;
+    gap: 10px;
+    font-family: 'DepartureMono', monospace;
+  }
+
+  /* ===== TOP ROW: Energy + Battery ===== */
+  .evcc-top-row {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  /* ===== ENERGY OVERVIEW ===== */
+  .evcc-energy {
+    flex: 1;
+    min-width: 0;
+  }
+  .evcc-energy-stats {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+  }
+  .evcc-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+  .evcc-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .evcc-stat-icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .evcc-stat-value {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .evcc-stat-label {
+    font-size: 10px;
+    color: #333;
+  }
+  .evcc-energy-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 6px;
+    font-size: 11px;
+  }
+  .evcc-energy-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ===== BATTERY CARD ===== */
+  .evcc-battery {
+    flex: 0 0 160px;
+    border: 3px solid black;
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .evcc-battery-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .evcc-battery-soc {
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+  }
+  .evcc-battery-power {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* ===== PROGRESS BAR (shared) ===== */
+  .evcc-progress {
+    width: 100%;
+    height: 8px;
+    background: #e5e5e5;
+    border-radius: 4px;
+    position: relative;
+    overflow: visible;
+  }
+  .evcc-progress-bar {
+    height: 100%;
+    background: black;
+    border-radius: 4px;
+    min-width: 1px;
+  }
+  .evcc-progress-marker {
+    position: absolute;
+    top: -2px;
+    width: 3px;
+    height: 12px;
+    background: black;
+    border-radius: 1px;
+  }
+
+  /* ===== LOADPOINTS ===== */
+  .evcc-loadpoints {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* ===== CARD (shared) ===== */
+  .evcc-card {
+    border: 3px solid black;
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .evcc-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+  }
+  .evcc-card-title {
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ===== MODE BADGE ===== */
+  .evcc-mode-badge {
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border: 2px solid black;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .evcc-mode-badge--active {
+    background: black;
+    color: white;
+  }
+
+  /* ===== LOADPOINT CONTENT ===== */
+  .evcc-lp-status {
+    font-size: 12px;
+    color: #333;
+  }
+  .evcc-lp-vehicle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 2px;
+  }
+  .evcc-lp-vehicle-name {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .evcc-lp-vehicle-range {
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .evcc-lp-soc-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .evcc-lp-soc-label {
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .evcc-lp-soc-bar {
+    flex: 1;
+    min-width: 0;
+  }
+  .evcc-lp-charge-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .evcc-lp-charge-stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .evcc-lp-session-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #333;
+    margin-top: 2px;
+  }
+  .evcc-lp-session-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  /* ===== STATISTICS ROW ===== */
+  .evcc-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 11px;
+    color: #333;
+    flex-shrink: 0;
+    padding-top: 4px;
+    border-top: 1px dashed #ccc;
+  }
+  .evcc-stats-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .evcc-stats-label {
+    font-weight: bold;
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .evcc-empty {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    padding: 8px;
+  }
+</style>
+
+<div class="evcc-full">
+
+  {% comment %} ===== TOP ROW: Energy Overview + Battery ===== {% endcomment %}
+  {% if has_energy or has_battery %}
+  <div class="evcc-top-row">
+
+    {% if has_energy %}
+    <div class="evcc-energy">
+      <div class="evcc-energy-stats">
+        {% comment %} Solar {% endcomment %}
+        <div class="evcc-stat">
+          <div class="evcc-stat-row">
+            <span class="evcc-stat-icon">{{ icon_solar }}</span>
+            <span class="evcc-stat-value">{{ energy.pv_power_formatted | default: "0 W" }}</span>
+          </div>
+          <span class="evcc-stat-label">Solar</span>
+        </div>
+
+        {% comment %} Grid {% endcomment %}
+        <div class="evcc-stat">
+          <div class="evcc-stat-row">
+            <span class="evcc-stat-icon">{{ icon_grid }}</span>
+            <span class="evcc-stat-value">{{ energy.grid_power_formatted | default: "0 W" }}</span>
+          </div>
+          <span class="evcc-stat-label">{% if energy.grid_import %}Import{% else %}Export{% endif %}</span>
+        </div>
+
+        {% comment %} Home {% endcomment %}
+        <div class="evcc-stat">
+          <div class="evcc-stat-row">
+            <span class="evcc-stat-icon">{{ icon_home }}</span>
+            <span class="evcc-stat-value">{{ energy.home_power_formatted | default: "0 W" }}</span>
+          </div>
+          <span class="evcc-stat-label">Home</span>
+        </div>
+      </div>
+
+      {% comment %} Green share and tariff line {% endcomment %}
+      {% assign green_share = energy.green_share_home | default: 0 | plus: 0 %}
+      <div class="evcc-energy-meta">
+        {% if green_share > 0 %}
+        <div class="evcc-energy-meta-item">
+          <span class="evcc-stat-icon">{{ icon_leaf }}</span>
+          <span>{{ green_share }}% green</span>
+        </div>
+        {% endif %}
+        {% if show_tariff == "yes" and energy.tariff_grid %}
+        <div class="evcc-energy-meta-item">
+          <span>{{ energy.tariff_grid | round: 2 }} {{ currency | default: "EUR" }}/kWh</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if has_battery %}
+    <div class="evcc-battery">
+      <div class="evcc-battery-header">
+        <span class="evcc-stat-icon">{{ icon_battery }}</span>
+        <span>Battery</span>
+      </div>
+      <div class="evcc-battery-soc">{{ battery.soc | default: 0 }}%</div>
+      <div class="evcc-progress" style="height: 6px;">
+        <div class="evcc-progress-bar" style="width: {{ battery.soc | default: 0 }}%;"></div>
+      </div>
+      <div class="evcc-battery-power">
+        {{ battery.power_formatted | default: "0 W" }}
+        {% if battery.charging %}&uarr;{% else %}&darr;{% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+  {% endif %}
+
+  {% comment %} ===== LOADPOINTS SECTION ===== {% endcomment %}
+  {% if has_loadpoints %}
+  <div class="evcc-loadpoints">
+    {% for lp in loadpoints limit: max_lps %}
+    <div class="evcc-card">
+      {% comment %} Header: Title + Mode Badge {% endcomment %}
+      <div class="evcc-card-header">
+        <span class="evcc-card-title">{{ lp.title | default: "Loadpoint" }}</span>
+        {% assign lp_mode = lp.mode_label | default: lp.mode | default: "off" %}
+        <span class="evcc-mode-badge{% if lp.charging %} evcc-mode-badge--active{% endif %}">{{ lp_mode }}</span>
+      </div>
+
+      {% comment %} Status line {% endcomment %}
+      <div class="evcc-lp-status">{{ lp.status | default: "Unknown" }}</div>
+
+      {% comment %} Vehicle details (if connected and enabled) {% endcomment %}
+      {% if show_vehicle == "yes" and lp.vehicle_connected %}
+        {% if lp.vehicle_title %}
+        <div class="evcc-lp-vehicle">
+          <span class="evcc-lp-vehicle-name">
+            <span class="evcc-stat-icon">{{ icon_car }}</span>
+            {{ lp.vehicle_title }}
+          </span>
+          {% if lp.vehicle_range %}
+          <span class="evcc-lp-vehicle-range">{{ lp.vehicle_range }} km</span>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {% comment %} SoC progress bar with limit marker {% endcomment %}
+        {% if lp.vehicle_soc %}
+        {% assign v_soc = lp.vehicle_soc | default: 0 | plus: 0 %}
+        {% assign l_soc = lp.limit_soc | default: 100 | plus: 0 %}
+        <div class="evcc-lp-soc-row">
+          <span class="evcc-lp-soc-label">{{ v_soc }}%</span>
+          <div class="evcc-lp-soc-bar">
+            <div class="evcc-progress">
+              <div class="evcc-progress-bar" style="width: {{ v_soc }}%;"></div>
+              {% if l_soc < 100 %}
+              <div class="evcc-progress-marker" style="left: {{ l_soc }}%;"></div>
+              {% endif %}
+            </div>
+          </div>
+          {% if l_soc < 100 %}
+          <span class="evcc-lp-soc-label">{{ l_soc }}%</span>
+          {% endif %}
+        </div>
+        {% endif %}
+      {% endif %}
+
+      {% comment %} Charge stats: energy + duration {% endcomment %}
+      {% assign charged_kwh = lp.charged_energy_kwh | default: 0 | plus: 0.0 %}
+      {% if lp.charging or charged_kwh > 0 %}
+      <div class="evcc-lp-charge-stats">
+        <span class="evcc-lp-charge-stat">
+          <span class="evcc-stat-icon">{{ icon_bolt }}</span>
+          {% if lp.charging %}{{ lp.charge_power_formatted | default: "0 W" }}{% endif %}
+        </span>
+        <span class="evcc-lp-charge-stat">
+          {{ charged_kwh | round: 1 }} kWh
+          {% if lp.charge_duration_formatted %}&middot; {{ lp.charge_duration_formatted }}{% endif %}
+        </span>
+      </div>
+
+      {% comment %} Session meta: solar share + price {% endcomment %}
+      <div class="evcc-lp-session-meta">
+        {% assign solar_pct = lp.session_solar_pct | default: 0 | plus: 0 %}
+        <span class="evcc-lp-session-item">
+          <span class="evcc-stat-icon">{{ icon_leaf }}</span>
+          {{ solar_pct }}% solar
+        </span>
+        {% if lp.session_price %}
+        <span class="evcc-lp-session-item">
+          {{ lp.session_price | round: 2 }} {{ currency | default: "EUR" }}
+        </span>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% comment %} Plan indicator {% endcomment %}
+      {% if lp.plan_active and lp.plan_time %}
+      <div class="evcc-lp-session-meta">
+        <span class="evcc-lp-session-item">
+          <span class="evcc-stat-icon">{{ icon_clock }}</span>
+          Plan: {{ lp.plan_time }}
+        </span>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    {% comment %} If fewer loadpoints than max_lps, no filler needed (flex handles it) {% endcomment %}
+  </div>
+  {% endif %}
+
+  {% comment %} ===== STATISTICS ROW (optional) ===== {% endcomment %}
+  {% if has_stats %}
+  <div class="evcc-stats-row">
+    {% if statistics.30d %}
+    <span class="evcc-stats-item">
+      <span class="evcc-stats-label">30d:</span>
+      {{ statistics.30d.charged_kwh | default: 0 | round: 0 }} kWh
+    </span>
+    <span class="evcc-stats-item">
+      {{ statistics.30d.solar_pct | default: 0 | round: 0 }}% solar
+    </span>
+    {% if statistics.30d.avg_price %}
+    <span class="evcc-stats-item">
+      avg {{ statistics.30d.avg_price | round: 2 }} {{ currency | default: "EUR" }}/kWh
+    </span>
+    {% endif %}
+    {% endif %}
+    {% if statistics.total %}
+    <span class="evcc-stats-item">
+      <span class="evcc-stats-label">Total:</span>
+      {{ statistics.total.charged_kwh | default: 0 | round: 0 }} kWh
+    </span>
+    <span class="evcc-stats-item">
+      {{ statistics.total.solar_pct | default: 0 | round: 0 }}% solar
+    </span>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+
+{% comment %} ===== TITLE BAR (bottom) ===== {% endcomment %}
+<div class="title_bar">
+  <span class="title">{{ icon_bolt }} EVCC &mdash; {{ site_title | default: "Solar Charging" }}</span>
+  <span class="instance">{{ last_updated_local | default: last_updated }} {{ timezone }}</span>
+</div>

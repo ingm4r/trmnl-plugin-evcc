@@ -1,0 +1,32 @@
+# EVCC TRMNL Collector Configuration
+#
+# Copy this file to config.yaml and update with your values.
+#
+# Usage:
+#   python evcc_collector.py --config config.yaml
+
+# Collection interval in seconds (300 = 5 minutes)
+# Set to 0 for single run mode
+interval: 300
+
+# Timezone for timestamp display
+timezone: Europe/Berlin
+
+# EVCC instance URL
+evcc_url: http://evcc:7070
+
+# TRMNL webhook URL (optional - omit to use serve mode only)
+# Works with both TRMNL Cloud and self-hosted Terminus
+# webhook: https://usetrmnl.com/api/custom_plugins/your-webhook-id
+
+# Maximum loadpoints to include (default: 4)
+max_loadpoints: 2
+
+# Power display unit: auto, W, or kW (default: auto)
+power_unit: auto
+
+# Optional: HTTP server for Terminus/BYOS Extensions (poll mode)
+# serve:
+#   enabled: true
+#   port: 8080
+#   host: 0.0.0.0

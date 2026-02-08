@@ -1,0 +1,98 @@
+# EVCC Idle Test Data
+# No vehicles connected, low PV production (cloudy/evening)
+# Copy variables section to .trmnlp.yml for testing
+
+custom_fields:
+  show_energy_overview: "yes"
+  show_battery: "yes"
+  show_loadpoints: "yes"
+  max_loadpoints: 2
+  show_vehicle_details: "yes"
+  show_statistics: "no"
+  show_tariff: "no"
+
+variables:
+  site_title: My Home
+  last_updated: "2026-01-20T17:30:00Z"
+  last_updated_local: "2026-01-20 18:30"
+  timezone: CET
+  currency: EUR
+
+  energy:
+    pv_power: 120
+    pv_power_formatted: "120 W"
+    grid_power: 580
+    grid_power_formatted: "580 W"
+    grid_import: true
+    home_power: 700
+    home_power_formatted: "700 W"
+    green_share_home: 17
+    tariff_grid: 0.30
+    tariff_feedin: 0.08
+    tariff_price_home: 0.25
+
+  battery:
+    configured: true
+    soc: 15
+    power: 0
+    power_formatted: "0 W"
+    charging: false
+
+  loadpoints:
+    - title: Garage
+      mode: "off"
+      mode_label: "Off"
+      charging: false
+      connected: false
+      enabled: false
+      status: Disconnected
+      charge_power: 0
+      charge_power_formatted: "0 W"
+      charged_energy_kwh: 0
+      charge_duration_formatted: ""
+      charge_remaining_formatted: ""
+      session_solar_pct: 0
+      session_price: 0
+      vehicle_title: ""
+      vehicle_soc: 0
+      vehicle_range: 0
+      vehicle_connected: false
+      limit_soc: 80
+      plan_active: false
+      plan_time: null
+      phases_active: 0
+
+    - title: Stellplatz
+      mode: "off"
+      mode_label: "Off"
+      charging: false
+      connected: false
+      enabled: false
+      status: Disconnected
+      charge_power: 0
+      charge_power_formatted: "0 W"
+      charged_energy_kwh: 0
+      charge_duration_formatted: ""
+      charge_remaining_formatted: ""
+      session_solar_pct: 0
+      session_price: 0
+      vehicle_title: ""
+      vehicle_soc: 0
+      vehicle_range: 0
+      vehicle_connected: false
+      limit_soc: 80
+      plan_active: false
+      plan_time: null
+      phases_active: 0
+
+  loadpoint_count: 2
+
+  statistics:
+    30d:
+      charged_kwh: 45.2
+      solar_pct: 32
+      avg_price: 0.19
+    total:
+      charged_kwh: 1847.3
+      solar_pct: 82
+      avg_price: 0.07

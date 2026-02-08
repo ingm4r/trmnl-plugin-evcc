@@ -1,0 +1,77 @@
+---
+strategy: webhook
+no_screen_padding: 'no'
+dark_mode: 'no'
+custom_fields:
+- keyname: show_energy_overview
+  field_type: select
+  name: Show Energy Overview
+  description: Display solar, grid, and home power stats
+  options:
+  - 'Yes'
+  - 'No'
+  default: 'Yes'
+- keyname: show_battery
+  field_type: select
+  name: Show Battery
+  description: Display home battery status (if configured in EVCC)
+  options:
+  - 'Yes'
+  - 'No'
+  default: 'Yes'
+- keyname: show_loadpoints
+  field_type: select
+  name: Show Loadpoints
+  description: Display EV charging loadpoint cards
+  options:
+  - 'Yes'
+  - 'No'
+  default: 'Yes'
+- keyname: max_loadpoints
+  field_type: number
+  name: Max Loadpoints
+  description: Maximum number of loadpoints to display (1-4)
+  placeholder: 2
+  min: 1
+  max: 4
+  default: 2
+- keyname: show_vehicle_details
+  field_type: select
+  name: Show Vehicle Details
+  description: Display vehicle name, SoC, and range
+  options:
+  - 'Yes'
+  - 'No'
+  default: 'Yes'
+- keyname: show_statistics
+  field_type: select
+  name: Show Statistics
+  description: Display 30-day charging statistics
+  options:
+  - 'Yes'
+  - 'No'
+  default: 'No'
+- keyname: show_tariff
+  field_type: select
+  name: Show Tariff
+  description: Display energy tariff/price information
+  options:
+  - 'Yes'
+  - 'No'
+  default: 'No'
+- keyname: power_unit
+  field_type: select
+  name: Power Unit
+  description: How to display power values
+  options:
+  - Auto
+  - W
+  - kW
+  default: Auto
+- keyname: author_info
+  name: About This Plugin
+  field_type: author_bio
+  description: Monitor your EVCC solar charging setup on TRMNL. See real-time solar production, grid usage, battery state, and EV charging sessions. Visit the GitHub repository for setup instructions.
+  github_url: https://github.com/ingm4r/trmnl-plugin-evcc
+name: EVCC Solar Charging
+refresh_interval: 5
