@@ -22,151 +22,56 @@
 {%- capture icon_leaf -%}<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20c4 0 8.68-3.9 12-12"/><path d="M2 2s7.45 3.89 8 10"/></svg>{%- endcapture -%}
 
 <style>
-  .evcc-quad {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 10px;
-    height: 190px;
-    box-sizing: border-box;
-  }
-  .evcc-quad .evcc-hero {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 0;
-  }
-  .evcc-quad .evcc-hero-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .evcc-quad .evcc-hero-value {
-    font-family: 'DepartureMono', monospace;
-    font-size: 32px;
-    font-weight: bold;
-    line-height: 1;
-  }
-  .evcc-quad .evcc-hero-label {
-    font-family: 'DepartureMono', monospace;
-    font-size: 10px;
-    color: #333;
-    margin-left: 4px;
-  }
-  .evcc-quad .evcc-lp-line {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'DepartureMono', monospace;
-    font-size: 12px;
-    padding: 4px 8px;
-    border: 2px solid black;
-    border-radius: 6px;
-    background: white;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-  .evcc-quad .evcc-lp-name {
-    font-weight: bold;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .evcc-quad .evcc-lp-status {
-    color: #333;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .evcc-quad .evcc-lp-power {
-    margin-left: auto;
-    font-weight: bold;
-    flex-shrink: 0;
-  }
-  .evcc-quad .evcc-stats-row {
-    display: flex;
-    flex-direction: row;
-    gap: 6px;
-    margin-top: auto;
-  }
-  .evcc-quad .evcc-stat-mini {
-    border: 1px solid black;
-    border-radius: 4px;
-    padding: 4px 6px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1px;
-    flex: 1;
-  }
-  .evcc-quad .evcc-stat-mini-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .evcc-quad .evcc-stat-mini-value {
-    font-family: 'DepartureMono', monospace;
-    font-size: 14px;
-    font-weight: bold;
-    line-height: 1;
-  }
-  .evcc-quad .evcc-stat-mini-label {
-    font-family: 'DepartureMono', monospace;
-    font-size: 8px;
-    color: #333;
-  }
-  .evcc-quad .evcc-empty {
-    font-family: 'DepartureMono', monospace;
-    font-size: 10px;
-    color: #666;
-  }
+  .evcc-quad { display: flex; flex-direction: column; gap: 6px; height: 190px; box-sizing: border-box; }
+  .evcc-quad .evcc-lp-line { border: 2px solid black; background: white; white-space: nowrap; overflow: hidden; }
+  .evcc-quad .evcc-stat-mini { border: 1px solid black; flex: 1; }
 </style>
 
-<div class="evcc-quad">
+<div class="evcc-quad p--small">
 
   <!-- Top: Hero PV Power -->
-  <div class="evcc-hero">
-    <span class="evcc-hero-icon">{{ icon_solar_lg }}</span>
-    <span class="evcc-hero-value">{{ energy.pv_power_formatted | default: "-- W" }}</span>
-    <span class="evcc-hero-label">Solar</span>
+  <div class="flex flex--center-y gap--small">
+    <span>{{ icon_solar_lg }}</span>
+    <span class="title title--large">{{ energy.pv_power_formatted | default: "-- W" }}</span>
+    <span class="text--gray-50">Solar</span>
   </div>
 
   <!-- Middle: First Loadpoint One-liner -->
   {% if show_loadpoints == "yes" %}
-  <div class="evcc-lp-line">
+  <div class="evcc-lp-line flex flex--center-y gap--small p--small">
     {% if loadpoints and loadpoints.size > 0 %}
       {% assign lp = loadpoints | first %}
-      <span class="evcc-stat-mini-icon">{{ icon_car }}</span>
-      <span class="evcc-lp-name">{{ lp.title | default: "Loadpoint" | truncate: 14 }}:</span>
+      <span>{{ icon_car }}</span>
+      <strong>{{ lp.title | default: "Loadpoint" | truncate: 14 }}:</strong>
       {% if lp.charging %}
-        <span class="evcc-lp-status">Charging</span>
-        <span class="evcc-lp-power">{{ lp.charge_power_formatted | default: "--" }}</span>
+        <span class="text--gray-50">Charging</span>
+        <strong style="margin-left: auto;">{{ lp.charge_power_formatted | default: "--" }}</strong>
       {% else %}
-        <span class="evcc-lp-status">{{ lp.status | default: "Disconnected" | truncate: 18 }}</span>
+        <span class="text--gray-50">{{ lp.status | default: "Disconnected" | truncate: 18 }}</span>
       {% endif %}
     {% else %}
-      <span class="evcc-empty">No loadpoints</span>
+      <span class="text--gray-50">No loadpoints</span>
     {% endif %}
   </div>
   {% endif %}
 
   <!-- Bottom: Mini Stat Boxes -->
-  <div class="evcc-stats-row">
-    <div class="evcc-stat-mini">
-      <span class="evcc-stat-mini-icon">{{ icon_grid }}</span>
-      <span class="evcc-stat-mini-value">{{ energy.grid_power_formatted | default: "--" }}</span>
-      <span class="evcc-stat-mini-label">Grid</span>
+  <div class="flex gap--small" style="margin-top: auto;">
+    <div class="evcc-stat-mini flex flex--col flex--center gap--xsmall p--small">
+      <span>{{ icon_grid }}</span>
+      <strong>{{ energy.grid_power_formatted | default: "--" }}</strong>
+      <span class="text--gray-50">Grid</span>
     </div>
-    <div class="evcc-stat-mini">
-      <span class="evcc-stat-mini-icon">{{ icon_home }}</span>
-      <span class="evcc-stat-mini-value">{{ energy.home_power_formatted | default: "--" }}</span>
-      <span class="evcc-stat-mini-label">Home</span>
+    <div class="evcc-stat-mini flex flex--col flex--center gap--xsmall p--small">
+      <span>{{ icon_home }}</span>
+      <strong>{{ energy.home_power_formatted | default: "--" }}</strong>
+      <span class="text--gray-50">Home</span>
     </div>
     {% if show_battery == "yes" and battery.configured %}
-    <div class="evcc-stat-mini">
-      <span class="evcc-stat-mini-icon">{{ icon_battery }}</span>
-      <span class="evcc-stat-mini-value">{{ battery.soc | default: 0 }}%</span>
-      <span class="evcc-stat-mini-label">Battery</span>
+    <div class="evcc-stat-mini flex flex--col flex--center gap--xsmall p--small">
+      <span>{{ icon_battery }}</span>
+      <strong>{{ battery.soc | default: 0 }}%</strong>
+      <span class="text--gray-50">Battery</span>
     </div>
     {% endif %}
   </div>
