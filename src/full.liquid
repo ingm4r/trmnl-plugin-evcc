@@ -35,12 +35,11 @@
 <style>
   .evcc-full { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; height: 430px; box-sizing: border-box; }
   .evcc-card { background: white; border: 3px solid black; border-radius: 8px; padding: 10px 12px; }
-  .evcc-mode { font-size: 10px; font-weight: bold; padding: 2px 6px; border: 2px solid black; border-radius: 4px; white-space: nowrap; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+  .evcc-mode { font-weight: bold; border: 2px solid black; white-space: nowrap; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px; }
   .evcc-mode--active { background: black; color: white; }
   .evcc-soc-bar { flex: 1; min-width: 0; }
-  .evcc-marker { position: absolute; top: -2px; width: 3px; height: 12px; background: black; border-radius: 1px; }
+  .evcc-marker { position: absolute; top: -2px; width: 3px; height: 12px; background: black; }
   .evcc-soc-progress { position: relative; overflow: visible; }
-  .evcc-stats { padding-top: 4px; border-top: 1px dashed #ccc; }
 </style>
 
 <div class="evcc-full">
@@ -164,7 +163,8 @@
 
   {% comment %} ===== STATISTICS ROW (optional) ===== {% endcomment %}
   {% if has_stats %}
-  <div class="flex flex--center-y gap--medium text--gray-50 no-shrink evcc-stats">
+  <div class="divider"></div>
+  <div class="flex flex--center-y gap--medium text--gray-50 no-shrink">
     {% if statistics["30d"] %}
     <span class="flex flex--center-y gap--xsmall"><strong>30d:</strong> {{ statistics["30d"].charged_kwh | default: 0 | round: 0 }} kWh</span>
     <span>{{ statistics["30d"].solar_pct | default: 0 | round: 0 }}% solar</span>

@@ -59,18 +59,10 @@ custom_fields:
   - 'Yes'
   - 'No'
   default: 'No'
-- keyname: power_unit
-  field_type: select
-  name: Power Unit
-  description: How to display power values
-  options:
-  - Auto
-  - W
-  - kW
-  default: Auto
 - keyname: author_bio
   name: About This Plugin
   field_type: author_bio
+  category: lifestyle,utilities
   description: Display your EVCC solar charging dashboard on TRMNL. Shows real-time solar production, grid usage, battery state, and EV charging sessions at a glance.
   github_url: https://github.com/ingm4r/trmnl-plugin-evcc
   learn_more_url: https://github.com/ingm4r/trmnl-plugin-evcc#readme
