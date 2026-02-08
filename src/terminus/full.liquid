@@ -28,28 +28,15 @@
 <style>
   .evcc-full {
     display: flex;
-    flex-direction: row;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
     padding: 12px;
     height: 430px;
     box-sizing: border-box;
     font-family: 'DepartureMono', monospace;
   }
-  /* Left column: Energy overview + Battery */
-  .evcc-col-left {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 0 0 220px;
-  }
-  /* Right column: Loadpoints */
-  .evcc-col-right {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
-    min-width: 0;
-  }
+
+  /* Info card (Energy + Battery combined) */
   .evcc-card {
     background: white;
     border: 3px solid black;
@@ -59,9 +46,6 @@
     flex-direction: column;
     gap: 6px;
     overflow: hidden;
-  }
-  .evcc-card--grow {
-    flex: 1;
   }
   .evcc-header {
     display: flex;
@@ -74,89 +58,45 @@
     font-size: 16px;
     font-weight: bold;
   }
-  .evcc-badge {
+  .evcc-green-share {
     font-size: 11px;
-    background: #e5e5e5;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-  .evcc-badge--active {
-    background: black;
-    color: white;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 3px;
   }
 
-  /* Energy overview rows */
-  .evcc-energy-row {
+  /* Info grid: two-column In/Out layout */
+  .evcc-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 24px;
+  }
+  .evcc-info-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 3px 0;
   }
-  .evcc-energy-row:last-child {
-    border-bottom: none;
-  }
-  .evcc-energy-label {
+  .evcc-info-label {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 13px;
   }
-  .evcc-energy-value {
-    font-size: 16px;
+  .evcc-info-value {
+    font-size: 14px;
     font-weight: bold;
     text-align: right;
-  }
-  .evcc-energy-arrow {
-    font-size: 11px;
-    color: #666;
-  }
-
-  /* Battery */
-  .evcc-battery-bar {
-    width: 100%;
-    height: 20px;
-    background: #e5e5e5;
-    border-radius: 4px;
-    border: 2px solid black;
-    position: relative;
-    overflow: hidden;
-  }
-  .evcc-battery-fill {
-    height: 100%;
-    background: black;
-    border-radius: 2px;
-    transition: width 0.3s;
-  }
-  .evcc-battery-label {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 11px;
-    font-weight: bold;
-    color: white;
-    mix-blend-mode: difference;
-  }
-  .evcc-battery-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: #666;
+    white-space: nowrap;
   }
 
   /* Loadpoint cards */
-  .evcc-loadpoints {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
-  }
   .evcc-lp-card {
+    background: white;
     border: 3px solid black;
     border-radius: 8px;
     padding: 10px;
-    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -229,167 +169,145 @@
     gap: 4px;
     font-weight: bold;
   }
+
+  /* Compact disconnected loadpoint */
+  .evcc-lp-compact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 13px;
+  }
+  .evcc-lp-compact .evcc-lp-title {
+    font-size: 14px;
+  }
+  .evcc-lp-compact .evcc-lp-status {
+    font-size: 12px;
+    color: #999;
+  }
+
   .evcc-lp-empty {
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
     color: #999;
-    flex: 1;
-  }
-  .evcc-green-share {
-    font-size: 11px;
-    color: #666;
-    display: flex;
-    align-items: center;
-    gap: 3px;
   }
 </style>
 
 <div class="evcc-full">
 
-  <!-- Left Column: Energy + Battery -->
-  <div class="evcc-col-left">
-
-    {% if show_energy == "yes" %}
-    <div class="evcc-card evcc-card--grow">
-      <div class="evcc-header">
-        <span class="evcc-header-title">Energy</span>
-        {% if energy.green_share_home %}
-        <span class="evcc-green-share">{{ icon_leaf }} {{ energy.green_share_home }}%</span>
-        {% endif %}
-      </div>
-
-      <div class="evcc-energy-row">
-        <span class="evcc-energy-label">{{ icon_sun }} Solar</span>
-        <span class="evcc-energy-value">{{ energy.pv_power_formatted | default: "0 W" }}</span>
-      </div>
-
-      <div class="evcc-energy-row">
-        <span class="evcc-energy-label">{{ icon_grid }} Grid
-          <span class="evcc-energy-arrow">{% if energy.grid_import %}&#9660;{% else %}&#9650;{% endif %}</span>
-        </span>
-        <span class="evcc-energy-value">{{ energy.grid_power_formatted | default: "0 W" }}</span>
-      </div>
-
-      <div class="evcc-energy-row">
-        <span class="evcc-energy-label">{{ icon_home }} Home</span>
-        <span class="evcc-energy-value">{{ energy.home_power_formatted | default: "0 W" }}</span>
-      </div>
-
-      {% if show_tariff == "yes" and energy.tariff_grid %}
-      <div class="evcc-energy-row">
-        <span class="evcc-energy-label" style="font-size: 11px;">Grid Price</span>
-        <span class="evcc-energy-value" style="font-size: 13px;">{{ energy.tariff_grid }} {{ currency | default: "EUR" }}/kWh</span>
-      </div>
+  {% comment %} ===== GENERAL INFO CARD: Energy + Battery ===== {% endcomment %}
+  {% if show_energy == "yes" %}
+  <div class="evcc-card">
+    <div class="evcc-header">
+      <span class="evcc-header-title">Energy</span>
+      {% if energy.green_share_home %}
+      <span class="evcc-green-share">{{ icon_leaf }} {{ energy.green_share_home }}% green</span>
       {% endif %}
     </div>
-    {% endif %}
-
-    {% if show_battery == "yes" and battery.configured %}
-    <div class="evcc-card">
-      <div class="evcc-header">
-        <span class="evcc-header-title">{{ icon_battery }} Battery</span>
-        <span class="evcc-badge">{{ battery.power_formatted | default: "0 W" }}</span>
-      </div>
-      <div class="evcc-battery-bar">
-        <div class="evcc-battery-fill" style="width: {{ battery.soc | default: 0 }}%;"></div>
-        <span class="evcc-battery-label">{{ battery.soc | default: 0 }}%</span>
-      </div>
-      <div class="evcc-battery-meta">
-        <span>{% if battery.charging %}Charging{% elsif battery.power < 0 %}Discharging{% else %}Idle{% endif %}</span>
-      </div>
-    </div>
-    {% endif %}
-
-    {% if show_stats == "yes" and stats %}
-    <div class="evcc-card">
-      <div class="evcc-header">
-        <span class="evcc-header-title">30 Days</span>
-      </div>
-      <div class="evcc-energy-row">
-        <span class="evcc-energy-label" style="font-size: 12px;">Charged</span>
-        <span class="evcc-energy-value" style="font-size: 13px;">{{ stats["30d"].charged_kwh }} kWh</span>
-      </div>
-      <div class="evcc-energy-row">
-        <span class="evcc-energy-label" style="font-size: 12px;">{{ icon_leaf }} Solar</span>
-        <span class="evcc-energy-value" style="font-size: 13px;">{{ stats["30d"].solar_pct }}%</span>
-      </div>
-    </div>
-    {% endif %}
-
-  </div>
-
-  <!-- Right Column: Loadpoints -->
-  {% if show_loadpoints == "yes" %}
-  <div class="evcc-col-right">
-    <div class="evcc-loadpoints">
-      {% assign lp_shown = 0 %}
-      {% for lp in loadpoints %}
-        {% if lp_shown < max_lps %}
-          <div class="evcc-lp-card{% if lp.charging %} evcc-lp-card--charging{% endif %}">
-            <div class="evcc-lp-header">
-              <span class="evcc-lp-title">{{ lp.title }}</span>
-              <span class="evcc-lp-mode{% if lp.mode == 'pv' %} evcc-lp-mode--pv{% elsif lp.mode == 'minpv' %} evcc-lp-mode--minpv{% endif %}">{{ lp.mode_label | default: lp.mode }}</span>
-            </div>
-
-            {% if lp.charging %}
-              <div class="evcc-lp-stats">
-                <span class="evcc-lp-stat">{{ icon_zap }} <span class="evcc-lp-stat-value">{{ lp.charge_power_formatted }}</span></span>
-                {% if lp.charged_energy_kwh > 0 %}
-                <span class="evcc-lp-stat"><span class="evcc-lp-stat-value">{{ lp.charged_energy_kwh }} kWh</span></span>
-                {% endif %}
-                {% if lp.charge_duration_formatted != "" %}
-                <span class="evcc-lp-stat">{{ icon_clock }} {{ lp.charge_duration_formatted }}</span>
-                {% endif %}
-              </div>
-              {% if lp.session_solar_pct > 0 %}
-              <div class="evcc-lp-stats">
-                <span class="evcc-lp-stat">{{ icon_leaf }} <span class="evcc-lp-stat-value">{{ lp.session_solar_pct }}%</span> solar</span>
-                {% if lp.charge_remaining_formatted != "" %}
-                <span class="evcc-lp-stat">{{ icon_clock }} {{ lp.charge_remaining_formatted }} left</span>
-                {% endif %}
-              </div>
-              {% endif %}
-
-              {% if show_vehicle == "yes" and lp.vehicle_connected %}
-              <div class="evcc-lp-vehicle">
-                <span class="evcc-lp-vehicle-name">{{ icon_car }} {{ lp.vehicle_title | default: "Vehicle" }}</span>
-                <span>{{ lp.vehicle_soc }}% {% if lp.limit_soc > 0 %}/ {{ lp.limit_soc }}%{% endif %}{% if lp.vehicle_range > 0 %} &middot; {{ lp.vehicle_range }} km{% endif %}</span>
-              </div>
-              {% if lp.vehicle_soc > 0 and lp.limit_soc > 0 %}
-              <div class="evcc-lp-progress">
-                <div class="evcc-lp-progress-bar" style="width: {% assign pct = lp.vehicle_soc | times: 100 | divided_by: lp.limit_soc %}{% if pct > 100 %}100{% else %}{{ pct }}{% endif %}%;"></div>
-              </div>
-              {% endif %}
-              {% endif %}
-
-            {% elsif lp.connected %}
-              <div class="evcc-lp-stats">
-                <span class="evcc-lp-stat">{{ lp.status | default: "Connected" }}</span>
-              </div>
-              {% if show_vehicle == "yes" and lp.vehicle_connected %}
-              <div class="evcc-lp-vehicle">
-                <span class="evcc-lp-vehicle-name">{{ icon_car }} {{ lp.vehicle_title | default: "Vehicle" }}</span>
-                <span>{{ lp.vehicle_soc }}%{% if lp.vehicle_range > 0 %} &middot; {{ lp.vehicle_range }} km{% endif %}</span>
-              </div>
-              {% endif %}
-
-            {% else %}
-              <div class="evcc-lp-empty">{{ lp.status | default: "Disconnected" }}</div>
-            {% endif %}
-          </div>
-          {% assign lp_shown = lp_shown | plus: 1 %}
-        {% endif %}
-      {% endfor %}
-
-      {% if loadpoints.size == 0 %}
-        <div class="evcc-card evcc-card--grow">
-          <div class="evcc-lp-empty">No loadpoints configured</div>
+    <div class="evcc-info-grid">
+      <div>
+        <div class="evcc-info-row">
+          <span class="evcc-info-label">{{ icon_sun }} Production</span>
+          <span class="evcc-info-value">{{ energy.pv_power_formatted | default: "0 W" }}</span>
         </div>
-      {% endif %}
+        <div class="evcc-info-row">
+          <span class="evcc-info-label">{{ icon_grid }} Grid use</span>
+          <span class="evcc-info-value">{% if energy.grid_import %}{{ energy.grid_power_formatted | default: "0 W" }}{% else %}0 W{% endif %}</span>
+        </div>
+        {% if show_battery == "yes" and battery.configured %}
+        <div class="evcc-info-row">
+          <span class="evcc-info-label">{{ icon_battery }} Battery {{ battery.soc | default: 0 }}%</span>
+          <span class="evcc-info-value">{{ battery.power_formatted | default: "0 W" }} {% if battery.charging %}&uarr;{% else %}&darr;{% endif %}</span>
+        </div>
+        {% endif %}
+      </div>
+      <div>
+        <div class="evcc-info-row">
+          <span class="evcc-info-label">{{ icon_home }} Consumption</span>
+          <span class="evcc-info-value">{{ energy.home_power_formatted | default: "0 W" }}</span>
+        </div>
+        <div class="evcc-info-row">
+          <span class="evcc-info-label">{{ icon_grid }} Grid export</span>
+          <span class="evcc-info-value">{% unless energy.grid_import %}{{ energy.grid_power_formatted | default: "0 W" }}{% else %}0 W{% endunless %}</span>
+        </div>
+      </div>
     </div>
   </div>
+  {% endif %}
+
+  {% comment %} ===== LOADPOINTS ===== {% endcomment %}
+  {% if show_loadpoints == "yes" %}
+    {% assign lp_shown = 0 %}
+    {% for lp in loadpoints %}
+      {% if lp_shown < max_lps %}
+        {% if lp.connected %}
+        <div class="evcc-lp-card{% if lp.charging %} evcc-lp-card--charging{% endif %}">
+          <div class="evcc-lp-header">
+            <span class="evcc-lp-title">{{ lp.title }}</span>
+            <span class="evcc-lp-mode{% if lp.mode == 'pv' %} evcc-lp-mode--pv{% elsif lp.mode == 'minpv' %} evcc-lp-mode--minpv{% endif %}">{{ lp.mode_label | default: lp.mode }}</span>
+          </div>
+
+          {% if lp.charging %}
+            <div class="evcc-lp-stats">
+              <span class="evcc-lp-stat">{{ icon_zap }} <span class="evcc-lp-stat-value">{{ lp.charge_power_formatted }}</span></span>
+              {% if lp.charged_energy_kwh > 0 %}
+              <span class="evcc-lp-stat"><span class="evcc-lp-stat-value">{{ lp.charged_energy_kwh }} kWh</span></span>
+              {% endif %}
+              {% if lp.charge_duration_formatted != "" %}
+              <span class="evcc-lp-stat">{{ icon_clock }} {{ lp.charge_duration_formatted }}</span>
+              {% endif %}
+            </div>
+            {% if lp.session_solar_pct > 0 %}
+            <div class="evcc-lp-stats">
+              <span class="evcc-lp-stat">{{ icon_leaf }} <span class="evcc-lp-stat-value">{{ lp.session_solar_pct }}%</span> solar</span>
+              {% if lp.charge_remaining_formatted != "" %}
+              <span class="evcc-lp-stat">{{ icon_clock }} {{ lp.charge_remaining_formatted }} left</span>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            {% if show_vehicle == "yes" and lp.vehicle_connected %}
+            <div class="evcc-lp-vehicle">
+              <span class="evcc-lp-vehicle-name">{{ icon_car }} {{ lp.vehicle_title | default: "Vehicle" }}</span>
+              <span>{{ lp.vehicle_soc }}% {% if lp.limit_soc > 0 %}/ {{ lp.limit_soc }}%{% endif %}{% if lp.vehicle_range > 0 %} &middot; {{ lp.vehicle_range }} km{% endif %}</span>
+            </div>
+            {% if lp.vehicle_soc > 0 and lp.limit_soc > 0 %}
+            <div class="evcc-lp-progress">
+              <div class="evcc-lp-progress-bar" style="width: {% assign pct = lp.vehicle_soc | times: 100 | divided_by: lp.limit_soc %}{% if pct > 100 %}100{% else %}{{ pct }}{% endif %}%;"></div>
+            </div>
+            {% endif %}
+            {% endif %}
+
+          {% else %}
+            <div class="evcc-lp-stats">
+              <span class="evcc-lp-stat">{{ lp.status | default: "Connected" }}</span>
+            </div>
+            {% if show_vehicle == "yes" and lp.vehicle_connected %}
+            <div class="evcc-lp-vehicle">
+              <span class="evcc-lp-vehicle-name">{{ icon_car }} {{ lp.vehicle_title | default: "Vehicle" }}</span>
+              <span>{{ lp.vehicle_soc }}%{% if lp.vehicle_range > 0 %} &middot; {{ lp.vehicle_range }} km{% endif %}</span>
+            </div>
+            {% endif %}
+          {% endif %}
+        </div>
+        {% else %}
+        <div class="evcc-lp-compact">
+          <span class="evcc-lp-title">{{ lp.title }}</span>
+          <span class="evcc-lp-mode">{{ lp.mode_label | default: lp.mode }}</span>
+          <span class="evcc-lp-status">{{ lp.status | default: "Disconnected" }}</span>
+        </div>
+        {% endif %}
+        {% assign lp_shown = lp_shown | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+
+    {% if loadpoints.size == 0 %}
+      <div class="evcc-card">
+        <div class="evcc-lp-empty">No loadpoints configured</div>
+      </div>
+    {% endif %}
   {% endif %}
 
 </div>
