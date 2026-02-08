@@ -276,26 +276,26 @@
         <span class="evcc-stat-value">{{ battery.power_formatted | default: "--" }}</span>
         <span class="evcc-stat-label">Battery Power</span>
       </div>
-      {% if show_stats == "yes" and statistics.30d %}
+      {% if show_stats == "yes" and statistics["30d"] %}
       <div class="evcc-bottom-item">
         <span class="evcc-stat-icon">{{ icon_leaf }}</span>
-        <span class="evcc-stat-value">{{ statistics.30d.solar_pct | default: 0 }}%</span>
+        <span class="evcc-stat-value">{{ statistics["30d"].solar_pct | default: 0 }}%</span>
         <span class="evcc-stat-label">30d Solar</span>
       </div>
       {% endif %}
     </div>
   </div>
-  {% elsif show_stats == "yes" and statistics.30d %}
+  {% elsif show_stats == "yes" and statistics["30d"] %}
   <div class="evcc-card">
     <div class="evcc-bottom-row">
       <div class="evcc-bottom-item">
         <span class="evcc-stat-icon">{{ icon_solar }}</span>
-        <span class="evcc-stat-value">{{ statistics.30d.charged_kwh | default: "0" }}</span>
+        <span class="evcc-stat-value">{{ statistics["30d"].charged_kwh | default: "0" }}</span>
         <span class="evcc-stat-label">30d kWh</span>
       </div>
       <div class="evcc-bottom-item">
         <span class="evcc-stat-icon">{{ icon_leaf }}</span>
-        <span class="evcc-stat-value">{{ statistics.30d.solar_pct | default: 0 }}%</span>
+        <span class="evcc-stat-value">{{ statistics["30d"].solar_pct | default: 0 }}%</span>
         <span class="evcc-stat-label">30d Solar</span>
       </div>
       <div class="evcc-bottom-item">

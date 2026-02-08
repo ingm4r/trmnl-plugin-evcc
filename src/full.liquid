@@ -484,17 +484,17 @@
   {% comment %} ===== STATISTICS ROW (optional) ===== {% endcomment %}
   {% if has_stats %}
   <div class="evcc-stats-row">
-    {% if statistics.30d %}
+    {% if statistics["30d"] %}
     <span class="evcc-stats-item">
       <span class="evcc-stats-label">30d:</span>
-      {{ statistics.30d.charged_kwh | default: 0 | round: 0 }} kWh
+      {{ statistics["30d"].charged_kwh | default: 0 | round: 0 }} kWh
     </span>
     <span class="evcc-stats-item">
-      {{ statistics.30d.solar_pct | default: 0 | round: 0 }}% solar
+      {{ statistics["30d"].solar_pct | default: 0 | round: 0 }}% solar
     </span>
-    {% if statistics.30d.avg_price %}
+    {% if statistics["30d"].avg_price %}
     <span class="evcc-stats-item">
-      avg {{ statistics.30d.avg_price | round: 2 }} {{ currency | default: "EUR" }}/kWh
+      avg {{ statistics["30d"].avg_price | round: 2 }} {{ currency | default: "EUR" }}/kWh
     </span>
     {% endif %}
     {% endif %}
