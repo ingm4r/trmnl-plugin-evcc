@@ -69,7 +69,9 @@ The collector will now send data to your TRMNL device every 5 minutes.
 
 ## Quick Start (Self-Hosted Terminus)
 
-If you run a self-hosted [Terminus](https://github.com/usetrmnl/byos_hanami) instance, the collector can serve data via HTTP instead of pushing to webhooks. See the [Terminus Setup Guide](docs/terminus.md) for details.
+If you run a self-hosted [Terminus](https://github.com/usetrmnl/byos_hanami) instance, the collector can serve data via HTTP instead of pushing to webhooks.
+
+A ready-to-use Terminus template is included at [`src/terminus/full.liquid`](src/terminus/full.liquid). See the [Terminus Setup Guide](docs/terminus.md) for full instructions.
 
 ## Configuration Reference
 
@@ -171,6 +173,7 @@ The plugin includes templates for all TRMNL screen configurations:
 | `half_horizontal` | 800x240 | Compact energy bar + active loadpoint |
 | `half_vertical` | 400x480 | Energy overview + single loadpoint |
 | `quadrant` | 400x240 | Minimal energy stats |
+| `terminus/full` | 800x480 | Terminus/BYOS adapted full layout |
 
 ## EVCC Requirements
 

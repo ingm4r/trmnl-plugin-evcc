@@ -78,24 +78,22 @@ curl http://localhost:8080/data/evcc
    - **URI:** `http://trmnl-evcc-collector:8080/data/evcc`
    - **Kind:** Poll
    - **Schedule:** 5 minutes (match your collector interval)
-   - **Template:** paste a Terminus-adapted template
-     (adapt from `src/full.liquid` — see Template Notes below)
+   - **Template:** paste the contents of [`src/terminus/full.liquid`](../src/terminus/full.liquid)
    - **Model:** select your device model
 4. Save and add the generated screen to your device playlist
 
 ## Template Notes
 
-When using templates on Terminus, keep these differences in mind:
+The Terminus template (`src/terminus/full.liquid`) differs from the Cloud
+template (`src/full.liquid`) in two ways:
 
-- **Data access:** Terminus Extensions expose data under `extension.values.*`
-  instead of top-level variables. For example, use `{{ extension.values.energy.pv_power_formatted }}`
-  instead of `{{ energy.pv_power_formatted }}`.
+- **Data access:** Terminus merges polled JSON data directly into the
+  template context at the top level. Data fields like `energy`, `battery`,
+  and `loadpoints` are accessed directly (e.g., `{{ energy.pv_power_formatted }}`).
+  This is the same as the Cloud template — both use top-level access.
 - **Settings:** `trmnl.plugin_settings` is not available on Terminus. The
-  Terminus-adapted template uses hardcoded defaults. You can customize these
-  by editing the `{% assign %}` blocks at the top of the template.
-- **Timestamps:** `trmnl.user.utc_offset` is not available on Terminus. The
-  collector includes a `last_updated_local` field with a pre-formatted local
-  timestamp as a workaround.
+  Terminus template uses hardcoded defaults instead. Customize these by
+  editing the `{% assign %}` blocks at the top of the template.
 
 ## Troubleshooting
 
@@ -114,6 +112,7 @@ docker logs trmnl-evcc-collector
 
 ### Template rendering errors
 
-Verify the template uses `extension.values.*` prefix for all data access.
-Test with the raw JSON endpoint first to confirm the data structure matches
-what your template expects.
+- Verify the template does **not** use `extension.values.*` for data access.
+  Polled data is merged directly into the template context at the top level.
+- Test with the raw JSON endpoint first to confirm the data structure matches
+  what your template expects.
