@@ -39,6 +39,8 @@
   .evcc-mode--active { background: black; color: white; }
   .evcc-soc-bar { flex: 1; min-width: 0; }
   .evcc-marker { position: absolute; top: -2px; width: 3px; height: 12px; background: black; border-radius: 1px; }
+  .evcc-soc-progress { position: relative; overflow: visible; }
+  .evcc-stats { padding-top: 4px; border-top: 1px dashed #ccc; }
 </style>
 
 <div class="evcc-full">
@@ -112,7 +114,7 @@
         <div class="flex flex--center-y gap--small">
           <strong>{{ v_soc }}%</strong>
           <div class="evcc-soc-bar">
-            <div class="progress-bar progress-bar--small" style="position: relative; overflow: visible;">
+            <div class="progress-bar progress-bar--small evcc-soc-progress">
               <div class="track">
                 <div class="fill" style="width: {{ v_soc }}%;"></div>
               </div>
@@ -162,7 +164,7 @@
 
   {% comment %} ===== STATISTICS ROW (optional) ===== {% endcomment %}
   {% if has_stats %}
-  <div class="flex flex--center-y gap--medium text--gray-50 no-shrink" style="padding-top: 4px; border-top: 1px dashed #ccc;">
+  <div class="flex flex--center-y gap--medium text--gray-50 no-shrink evcc-stats">
     {% if statistics["30d"] %}
     <span class="flex flex--center-y gap--xsmall"><strong>30d:</strong> {{ statistics["30d"].charged_kwh | default: 0 | round: 0 }} kWh</span>
     <span>{{ statistics["30d"].solar_pct | default: 0 | round: 0 }}% solar</span>
