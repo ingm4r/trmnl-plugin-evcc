@@ -22,9 +22,9 @@
 
 <style>
   .evcc-half-v { display: flex; flex-direction: column; gap: 8px; height: 430px; box-sizing: border-box; }
-  .evcc-half-v .evcc-card { background: white; border: 1px solid black; overflow: hidden; }
-  .evcc-half-v .evcc-stat-box { border: 1px solid black; flex: 1; }
-  .evcc-half-v .evcc-soc-bar { width: 100%; height: 10px; background: #e5e5e5; border: 1px solid black; overflow: hidden; position: relative; }
+  .evcc-half-v .evcc-card { background: white; border: 1px solid #999; overflow: hidden; }
+  .evcc-half-v .evcc-stat-box { border: 1px solid #bbb; flex: 1; }
+  .evcc-half-v .evcc-soc-bar { width: 100%; height: 10px; background: #e5e5e5; border: 1px solid #999; overflow: hidden; position: relative; }
   .evcc-half-v .evcc-soc-fill { height: 100%; background: black; }
   .evcc-half-v .evcc-soc-limit { position: absolute; top: 0; bottom: 0; width: 2px; background: #666; }
 </style>
@@ -54,54 +54,60 @@
   </div>
   {% endif %}
 
-  <!-- Middle Section: First Loadpoint Detail -->
-  {% if show_loadpoints == "yes" %}
-  <div class="evcc-card flex flex--col gap--xsmall p--small">
-    {% if loadpoints and loadpoints.size > 0 %}
-      {% assign lp = loadpoints | first %}
-      <div class="flex flex--between flex--center-y">
+  <!-- Middle Section: Loadpoints -->
+  {% if show_loadpoints == "yes" and loadpoints and loadpoints.size > 0 %}
+    {% for lp in loadpoints %}
+      {% if forloop.index > max_lps %}{% break %}{% endif %}
+      {% if lp.connected %}
+      <div class="evcc-card flex flex--col gap--xsmall p--small">
+        <div class="flex flex--between flex--center-y">
+          <strong>{{ icon_car }} {{ lp.title | default: "Loadpoint" }}</strong>
+          <span class="tag{% if lp.charging %} tag--black{% endif %}">{{ lp.mode_label | default: "off" }}</span>
+        </div>
+        <div class="divider"></div>
+        <div class="flex flex--col gap--small">
+          {% if show_vehicle == "yes" %}
+          <div class="flex flex--between flex--center-y">
+            <strong>{{ lp.vehicle_title | default: "Vehicle" }}</strong>
+            {% if lp.vehicle_range %}<span>{{ lp.vehicle_range }}</span>{% endif %}
+          </div>
+          {% if lp.vehicle_soc %}
+          <div class="evcc-soc-bar">
+            <div class="evcc-soc-fill" style="width: {{ lp.vehicle_soc }}%;"></div>
+            {% if lp.limit_soc %}
+            <div class="evcc-soc-limit" style="left: {{ lp.limit_soc }}%;"></div>
+            {% endif %}
+          </div>
+          <div class="flex flex--between">
+            <span>{{ lp.vehicle_soc }}%</span>
+            {% if lp.limit_soc %}<span>Limit: {{ lp.limit_soc }}%</span>{% endif %}
+          </div>
+          {% endif %}
+          {% endif %}
+          <div class="flex flex--between flex--center-y">
+            <span>{{ lp.status | default: "Disconnected" }}</span>
+            {% if lp.charging %}
+              <strong>{{ lp.charge_power_formatted | default: "--" }}</strong>
+            {% endif %}
+          </div>
+          {% if lp.charged_energy_kwh %}
+          <div class="flex flex--between flex--center-y">
+            <span>Session: {{ lp.charged_energy_kwh }} kWh</span>
+            {% if lp.session_solar_pct %}
+            <span>{{ icon_leaf }} {{ lp.session_solar_pct }}% solar</span>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% else %}
+      <div class="evcc-card flex flex--between flex--center-y p--small" style="border-style: dotted;">
         <strong>{{ icon_car }} {{ lp.title | default: "Loadpoint" }}</strong>
-        <span class="tag{% if lp.charging %} tag--black{% endif %}">{{ lp.mode_label | default: "off" }}</span>
+        <span>{{ lp.mode_label | default: "off" }}</span>
+        <span>Disconnected</span>
       </div>
-      <div class="divider"></div>
-      <div class="flex flex--col gap--small">
-        {% if show_vehicle == "yes" and lp.connected %}
-        <div class="flex flex--between flex--center-y">
-          <strong>{{ lp.vehicle_title | default: "Vehicle" }}</strong>
-          {% if lp.vehicle_range %}<span>{{ lp.vehicle_range }}</span>{% endif %}
-        </div>
-        {% if lp.vehicle_soc %}
-        <div class="evcc-soc-bar">
-          <div class="evcc-soc-fill" style="width: {{ lp.vehicle_soc }}%;"></div>
-          {% if lp.limit_soc %}
-          <div class="evcc-soc-limit" style="left: {{ lp.limit_soc }}%;"></div>
-          {% endif %}
-        </div>
-        <div class="flex flex--between">
-          <span>{{ lp.vehicle_soc }}%</span>
-          {% if lp.limit_soc %}<span>Limit: {{ lp.limit_soc }}%</span>{% endif %}
-        </div>
-        {% endif %}
-        {% endif %}
-        <div class="flex flex--between flex--center-y">
-          <span>{{ lp.status | default: "Disconnected" }}</span>
-          {% if lp.charging %}
-            <strong>{{ lp.charge_power_formatted | default: "--" }}</strong>
-          {% endif %}
-        </div>
-        {% if lp.charged_energy_kwh %}
-        <div class="flex flex--between flex--center-y">
-          <span>Session: {{ lp.charged_energy_kwh }} kWh</span>
-          {% if lp.session_solar_pct %}
-          <span>{{ icon_leaf }} {{ lp.session_solar_pct }}% solar</span>
-          {% endif %}
-        </div>
-        {% endif %}
-      </div>
-    {% else %}
-      <span>No loadpoints configured</span>
-    {% endif %}
-  </div>
+      {% endif %}
+    {% endfor %}
   {% endif %}
 
   <!-- Bottom Section: Battery SoC + Power or 30d Statistics -->

@@ -36,23 +36,21 @@
     <span>Solar</span>
   </div>
 
-  <!-- Middle: First Loadpoint One-liner -->
-  {% if show_loadpoints == "yes" %}
-  <div class="evcc-lp-line flex flex--center-y gap--small p--small">
-    {% if loadpoints and loadpoints.size > 0 %}
-      {% assign lp = loadpoints | first %}
-      <span>{{ icon_car }}</span>
-      <strong>{{ lp.title | default: "Loadpoint" | truncate: 14 }}:</strong>
-      {% if lp.charging %}
-        <span>Charging</span>
-        <strong style="margin-left: auto;">{{ lp.charge_power_formatted | default: "--" }}</strong>
-      {% else %}
-        <span>{{ lp.status | default: "Disconnected" | truncate: 18 }}</span>
-      {% endif %}
-    {% else %}
-      <span>No loadpoints</span>
-    {% endif %}
-  </div>
+  <!-- Middle: Loadpoint One-liners -->
+  {% if show_loadpoints == "yes" and loadpoints and loadpoints.size > 0 %}
+    {% for lp in loadpoints %}
+      {% if forloop.index > max_lps %}{% break %}{% endif %}
+      <div class="evcc-lp-line flex flex--center-y gap--small p--small">
+        <span>{{ icon_car }}</span>
+        <strong>{{ lp.title | default: "Loadpoint" | truncate: 14 }}:</strong>
+        {% if lp.charging %}
+          <span>Charging</span>
+          <strong style="margin-left: auto;">{{ lp.charge_power_formatted | default: "--" }}</strong>
+        {% else %}
+          <span>{{ lp.status | default: "Disconnected" | truncate: 18 }}</span>
+        {% endif %}
+      </div>
+    {% endfor %}
   {% endif %}
 
   <!-- Bottom: Mini Stat Boxes -->
