@@ -109,7 +109,7 @@
 
         {% if lp.vehicle_soc %}
         {% assign v_soc = lp.vehicle_soc | default: 0 | plus: 0 | round: 0 %}
-        {% assign l_soc = lp.limit_soc | plus: 0 %}{% if l_soc == 0 %}{% assign l_soc = 100 %}{% endif %}
+        {% assign l_soc = lp.limit_soc | plus: 0 %}
         <div class="flex flex--center-y gap--small">
           <strong>{{ v_soc }}%</strong>
           <div class="evcc-soc-bar">
@@ -117,12 +117,12 @@
               <div class="track">
                 <div class="fill" style="width: {{ v_soc }}%;"></div>
               </div>
-              {% if l_soc < 100 %}
+              {% if l_soc > 0 and l_soc < 100 %}
               <div class="evcc-marker" style="left: {{ l_soc }}%;"></div>
               {% endif %}
             </div>
           </div>
-          {% if l_soc < 100 %}<strong>{{ l_soc }}%</strong>{% endif %}
+          {% if l_soc > 0 and l_soc < 100 %}<strong>{{ l_soc }}%</strong>{% endif %}
         </div>
         {% endif %}
       {% endif %}
