@@ -33,7 +33,7 @@
   <div class="flex flex--center-y gap--small">
     <span>{{ icon_solar_lg }}</span>
     <span class="title title--large">{{ energy.pv_power_formatted | default: "-- W" }}</span>
-    <span class="text--gray-50">Solar</span>
+    <span class="">Solar</span>
   </div>
 
   <!-- Middle: First Loadpoint One-liner -->
@@ -44,13 +44,13 @@
       <span>{{ icon_car }}</span>
       <strong>{{ lp.title | default: "Loadpoint" | truncate: 14 }}:</strong>
       {% if lp.charging %}
-        <span class="text--gray-50">Charging</span>
+        <span class="">Charging</span>
         <strong style="margin-left: auto;">{{ lp.charge_power_formatted | default: "--" }}</strong>
       {% else %}
-        <span class="text--gray-50">{{ lp.status | default: "Disconnected" | truncate: 18 }}</span>
+        <span class="">{{ lp.status | default: "Disconnected" | truncate: 18 }}</span>
       {% endif %}
     {% else %}
-      <span class="text--gray-50">No loadpoints</span>
+      <span class="">No loadpoints</span>
     {% endif %}
   </div>
   {% endif %}
@@ -60,18 +60,18 @@
     <div class="evcc-stat-mini flex flex--col flex--center gap--xsmall p--small">
       <span>{{ icon_grid }}</span>
       <strong>{{ energy.grid_power_formatted | default: "--" }}</strong>
-      <span class="text--gray-50">Grid</span>
+      <span class="">Grid</span>
     </div>
     <div class="evcc-stat-mini flex flex--col flex--center gap--xsmall p--small">
       <span>{{ icon_home }}</span>
       <strong>{{ energy.home_power_formatted | default: "--" }}</strong>
-      <span class="text--gray-50">Home</span>
+      <span class="">Home</span>
     </div>
     {% if show_battery == "yes" and battery.configured %}
     <div class="evcc-stat-mini flex flex--col flex--center gap--xsmall p--small">
       <span>{{ icon_battery }}</span>
       <strong>{{ battery.soc | default: 0 }}%</strong>
-      <span class="text--gray-50">Battery</span>
+      <span class="">Battery</span>
     </div>
     {% endif %}
   </div>

@@ -51,7 +51,7 @@
       <span class="title title--small">Energy</span>
       {% assign green_share = energy.green_share_home | default: 0 | plus: 0 %}
       {% if green_share > 0 %}
-      <span class="flex flex--center-y gap--xsmall text--gray-50">{{ icon_leaf }} {{ green_share }}% green</span>
+      <span class="flex flex--center-y gap--xsmall">{{ icon_leaf }} {{ green_share }}% green</span>
       {% endif %}
     </div>
     <div class="divider"></div>
@@ -97,7 +97,7 @@
         <span class="evcc-mode{% if lp.charging %} evcc-mode--active{% endif %}">{{ lp_mode }}</span>
       </div>
 
-      <span class="text--gray-50">{{ lp.status | default: "Unknown" }}</span>
+      <span class="text--secondary">{{ lp.status | default: "Unknown" }}</span>
 
       {% if show_vehicle == "yes" and lp.vehicle_connected %}
         {% if lp.vehicle_title %}
@@ -137,7 +137,7 @@
         </span>
       </div>
 
-      <div class="flex flex--between flex--center-y text--gray-50">
+      <div class="flex flex--between flex--center-y">
         {% assign solar_pct = lp.session_solar_pct | default: 0 | plus: 0 %}
         <span class="flex flex--center-y gap--xsmall">{{ icon_leaf }} {{ solar_pct }}% solar</span>
         {% if lp.session_price %}
@@ -147,7 +147,7 @@
       {% endif %}
 
       {% if lp.plan_active and lp.plan_time %}
-      <div class="flex flex--center-y gap--xsmall text--gray-50">{{ icon_clock }} Plan: {{ lp.plan_time }}</div>
+      <div class="flex flex--center-y gap--xsmall">{{ icon_clock }} Plan: {{ lp.plan_time }}</div>
       {% endif %}
     </div>
     {% else %}
@@ -155,7 +155,7 @@
       <strong>{{ lp.title | default: "Loadpoint" }}</strong>
       {% assign lp_mode = lp.mode_label | default: lp.mode | default: "off" %}
       <span class="evcc-mode">{{ lp_mode }}</span>
-      <span class="text--gray-50">{{ lp.status | default: "Disconnected" }}</span>
+      <span class="text--secondary">{{ lp.status | default: "Disconnected" }}</span>
     </div>
     {% endif %}
     {% endfor %}
@@ -164,7 +164,7 @@
   {% comment %} ===== STATISTICS ROW (optional) ===== {% endcomment %}
   {% if has_stats %}
   <div class="divider"></div>
-  <div class="flex flex--center-y gap--medium text--gray-50 no-shrink">
+  <div class="flex flex--center-y gap--medium no-shrink">
     {% if statistics["30d"] %}
     <span class="flex flex--center-y gap--xsmall"><strong>30d:</strong> {{ statistics["30d"].charged_kwh | default: 0 | round: 0 }} kWh</span>
     <span>{{ statistics["30d"].solar_pct | default: 0 | round: 0 }}% solar</span>
