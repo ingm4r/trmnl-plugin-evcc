@@ -275,7 +275,8 @@ class EVCCCollector:
             session_solar_pct = round(session_solar_pct)
 
         # Session price is a float (total cost for the session)
-        session_price = lp.get("sessionPrice")
+        session_price_raw = lp.get("sessionPrice")
+        session_price = round(session_price_raw, 2) if session_price_raw is not None else None
 
         return {
             "title": lp.get("title", ""),
@@ -318,10 +319,13 @@ class EVCCCollector:
 
         for period in ("30d", "total"):
             period_data = stats.get(period, {})
+            charged = period_data.get("chargedKWh")
+            solar = period_data.get("solarPercentage")
+            price = period_data.get("avgPrice")
             result[period] = {
-                "charged_kwh": period_data.get("chargedKWh"),
-                "solar_pct": period_data.get("solarPercentage"),
-                "avg_price": period_data.get("avgPrice"),
+                "charged_kwh": round(charged, 1) if charged is not None else None,
+                "solar_pct": round(solar) if solar is not None else None,
+                "avg_price": round(price, 2) if price is not None else None,
             }
 
         return result

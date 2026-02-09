@@ -72,15 +72,16 @@
             {% if lp.vehicle_range %}<span>{{ lp.vehicle_range }}</span>{% endif %}
           </div>
           {% if lp.vehicle_soc %}
+          {% assign l_soc = lp.limit_soc | plus: 0 %}
           <div class="evcc-soc-bar">
             <div class="evcc-soc-fill" style="width: {{ lp.vehicle_soc }}%;"></div>
-            {% if lp.limit_soc %}
-            <div class="evcc-soc-limit" style="left: {{ lp.limit_soc }}%;"></div>
+            {% if l_soc > 0 and l_soc < 100 %}
+            <div class="evcc-soc-limit" style="left: {{ l_soc }}%;"></div>
             {% endif %}
           </div>
           <div class="flex flex--between">
             <span>{{ lp.vehicle_soc | round: 0 }}%</span>
-            {% if lp.limit_soc %}<span>Limit: {{ lp.limit_soc }}%</span>{% endif %}
+            {% if l_soc > 0 and l_soc < 100 %}<span>Limit: {{ l_soc }}%</span>{% endif %}
           </div>
           {% endif %}
           {% endif %}
