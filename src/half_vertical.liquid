@@ -22,8 +22,7 @@
 
 <style>
   .evcc-half-v { display: flex; flex-direction: column; gap: 8px; height: 430px; box-sizing: border-box; }
-  .evcc-half-v .evcc-card { background: white; border: 2px solid black; overflow: hidden; }
-  .evcc-half-v .evcc-card--grow { flex: 1; min-height: 0; }
+  .evcc-half-v .evcc-card { background: white; border: 1px solid black; overflow: hidden; }
   .evcc-half-v .evcc-stat-box { border: 1px solid black; flex: 1; }
   .evcc-half-v .evcc-soc-bar { width: 100%; height: 10px; background: #e5e5e5; border: 1px solid black; overflow: hidden; position: relative; }
   .evcc-half-v .evcc-soc-fill { height: 100%; background: black; }
@@ -39,17 +38,17 @@
       <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
         <span>{{ icon_solar }}</span>
         <strong>{{ energy.pv_power_formatted | default: "--" }}</strong>
-        <span class="">Solar</span>
+        <span>Solar</span>
       </div>
       <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
         <span>{{ icon_grid }}</span>
         <strong>{{ energy.grid_power_formatted | default: "--" }}</strong>
-        <span class="">Grid</span>
+        <span>Grid</span>
       </div>
       <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
         <span>{{ icon_home }}</span>
         <strong>{{ energy.home_power_formatted | default: "--" }}</strong>
-        <span class="">Home</span>
+        <span>Home</span>
       </div>
     </div>
   </div>
@@ -57,7 +56,7 @@
 
   <!-- Middle Section: First Loadpoint Detail -->
   {% if show_loadpoints == "yes" %}
-  <div class="evcc-card evcc-card--grow flex flex--col gap--xsmall p--small">
+  <div class="evcc-card flex flex--col gap--xsmall p--small">
     {% if loadpoints and loadpoints.size > 0 %}
       {% assign lp = loadpoints | first %}
       <div class="flex flex--between flex--center-y">
@@ -100,7 +99,7 @@
         {% endif %}
       </div>
     {% else %}
-      <span class="">No loadpoints configured</span>
+      <span>No loadpoints configured</span>
     {% endif %}
   </div>
   {% endif %}
@@ -112,18 +111,18 @@
       <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
         <span>{{ icon_battery }}</span>
         <strong>{{ battery.soc | default: 0 }}%</strong>
-        <span class="">Battery{% if battery.charging %} (Charging){% endif %}</span>
+        <span>Battery{% if battery.charging %} (Charging){% endif %}</span>
       </div>
       <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
         <span>{{ icon_grid }}</span>
         <strong>{{ battery.power_formatted | default: "--" }}</strong>
-        <span class="">Battery Power</span>
+        <span>Battery Power</span>
       </div>
       {% if show_stats == "yes" and statistics["30d"] %}
       <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
         <span>{{ icon_leaf }}</span>
-        <strong>{{ statistics["30d"].solar_pct | default: 0 }}%</strong>
-        <span class="">30d Solar</span>
+        <strong>{{ statistics["30d"].solar_pct | default: 0 | round: 0 }}%</strong>
+        <span>30d Solar</span>
       </div>
       {% endif %}
     </div>
@@ -133,18 +132,18 @@
     <div class="flex gap--small">
       <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
         <span>{{ icon_solar }}</span>
-        <strong>{{ statistics["30d"].charged_kwh | default: "0" }}</strong>
-        <span class="">30d kWh</span>
+        <strong>{{ statistics["30d"].charged_kwh | default: "0" | round: 0 }}</strong>
+        <span>30d kWh</span>
       </div>
       <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
         <span>{{ icon_leaf }}</span>
-        <strong>{{ statistics["30d"].solar_pct | default: 0 }}%</strong>
-        <span class="">30d Solar</span>
+        <strong>{{ statistics["30d"].solar_pct | default: 0 | round: 0 }}%</strong>
+        <span>30d Solar</span>
       </div>
       <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
         <span>{{ icon_home }}</span>
         <strong>{{ energy.green_share_home | default: 0 }}%</strong>
-        <span class="">Green Home</span>
+        <span>Green Home</span>
       </div>
     </div>
   </div>

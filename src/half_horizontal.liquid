@@ -23,7 +23,7 @@
 <style>
   .evcc-half-h { display: flex; gap: 10px; height: 190px; box-sizing: border-box; }
   .evcc-half-h .evcc-col--energy { width: 370px; flex-shrink: 0; }
-  .evcc-half-h .evcc-card { background: white; border: 2px solid black; height: 100%; overflow: hidden; }
+  .evcc-half-h .evcc-card { background: white; border: 1px solid black; height: 100%; overflow: hidden; }
   .evcc-half-h .evcc-stat-box { border: 1px solid black; flex: 1; }
   .evcc-half-h .evcc-soc-bar { flex: 1; height: 8px; background: #e5e5e5; border: 1px solid black; overflow: hidden; }
   .evcc-half-h .evcc-soc-fill { height: 100%; background: black; }
@@ -39,29 +39,29 @@
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_solar }}</span>
           <strong>{{ energy.pv_power_formatted | default: "--" }}</strong>
-          <span class="">Solar</span>
+          <span>Solar</span>
         </div>
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_grid }}</span>
           <strong>{{ energy.grid_power_formatted | default: "--" }}</strong>
-          <span class="">Grid{% if energy.grid_import %} (Import){% else %} (Export){% endif %}</span>
+          <span>Grid{% if energy.grid_import %} (Import){% else %} (Export){% endif %}</span>
         </div>
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_home }}</span>
           <strong>{{ energy.home_power_formatted | default: "--" }}</strong>
-          <span class="">Home</span>
+          <span>Home</span>
         </div>
         {% if show_battery == "yes" and battery.configured %}
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_battery }}</span>
           <strong>{{ battery.soc | default: 0 }}%</strong>
-          <span class="">Battery{% if battery.power_formatted %} {{ battery.power_formatted }}{% endif %}</span>
+          <span>Battery{% if battery.power_formatted %} {{ battery.power_formatted }}{% endif %}</span>
         </div>
         {% else %}
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_leaf }}</span>
           <strong>{{ energy.green_share_home | default: 0 }}%</strong>
-          <span class="">Green</span>
+          <span>Green</span>
         </div>
         {% endif %}
       </div>
@@ -109,7 +109,7 @@
           {% endif %}
         </div>
       {% else %}
-        <span class="">No loadpoints configured</span>
+        <span>No loadpoints configured</span>
       {% endif %}
     </div>
   </div>
