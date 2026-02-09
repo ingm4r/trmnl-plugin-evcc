@@ -36,3 +36,6 @@ collector/config.yaml
 
 # Python
 __pycache__/
+
+# Claude Code
+CLAUDE.md
