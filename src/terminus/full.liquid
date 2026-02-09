@@ -110,7 +110,7 @@
             {% if show_vehicle == "yes" and lp.vehicle_connected %}
             <div class="flex flex--between flex--center-y">
               <span class="flex flex--center-y gap--xsmall">{{ icon_car }} <strong>{{ lp.vehicle_title | default: "Vehicle" }}</strong></span>
-              <span>{{ lp.vehicle_soc }}% {% if lp.limit_soc > 0 %}/ {{ lp.limit_soc }}%{% endif %}{% if lp.vehicle_range > 0 %} &middot; {{ lp.vehicle_range }} km{% endif %}</span>
+              <span>{{ lp.vehicle_soc | round: 0 }}% {% if lp.limit_soc > 0 %}/ {{ lp.limit_soc }}%{% endif %}{% if lp.vehicle_range > 0 %} &middot; {{ lp.vehicle_range }} km{% endif %}</span>
             </div>
             {% if lp.vehicle_soc > 0 and lp.limit_soc > 0 %}
             <div class="progress-bar progress-bar--small">
@@ -126,7 +126,7 @@
             {% if show_vehicle == "yes" and lp.vehicle_connected %}
             <div class="flex flex--between flex--center-y">
               <span class="flex flex--center-y gap--xsmall">{{ icon_car }} <strong>{{ lp.vehicle_title | default: "Vehicle" }}</strong></span>
-              <span>{{ lp.vehicle_soc }}%{% if lp.vehicle_range > 0 %} &middot; {{ lp.vehicle_range }} km{% endif %}</span>
+              <span>{{ lp.vehicle_soc | round: 0 }}%{% if lp.vehicle_range > 0 %} &middot; {{ lp.vehicle_range }} km{% endif %}</span>
             </div>
             {% endif %}
           {% endif %}

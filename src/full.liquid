@@ -108,8 +108,8 @@
         {% endif %}
 
         {% if lp.vehicle_soc %}
-        {% assign v_soc = lp.vehicle_soc | default: 0 | plus: 0 %}
-        {% assign l_soc = lp.limit_soc | default: 100 | plus: 0 %}
+        {% assign v_soc = lp.vehicle_soc | default: 0 | plus: 0 | round: 0 %}
+        {% assign l_soc = lp.limit_soc | plus: 0 %}{% if l_soc == 0 %}{% assign l_soc = 100 %}{% endif %}
         <div class="flex flex--center-y gap--small">
           <strong>{{ v_soc }}%</strong>
           <div class="evcc-soc-bar">

@@ -91,7 +91,7 @@
             <div class="evcc-soc-bar">
               <div class="evcc-soc-fill" style="width: {{ lp.vehicle_soc }}%;"></div>
             </div>
-            <span>{{ lp.vehicle_soc }}%{% if lp.limit_soc %}/{{ lp.limit_soc }}%{% endif %}</span>
+            <span>{{ lp.vehicle_soc | round: 0 }}%{% if lp.limit_soc %}/{{ lp.limit_soc }}%{% endif %}</span>
             {% endif %}
           </div>
           {% endif %}

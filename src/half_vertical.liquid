@@ -79,7 +79,7 @@
             {% endif %}
           </div>
           <div class="flex flex--between">
-            <span>{{ lp.vehicle_soc }}%</span>
+            <span>{{ lp.vehicle_soc | round: 0 }}%</span>
             {% if lp.limit_soc %}<span>Limit: {{ lp.limit_soc }}%</span>{% endif %}
           </div>
           {% endif %}
