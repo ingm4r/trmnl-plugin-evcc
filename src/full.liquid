@@ -51,35 +51,35 @@
       <span class="title title--small">Energy</span>
       {% assign green_share = energy.green_share_home | default: 0 | plus: 0 %}
       {% if green_share > 0 %}
-      <span class="flex flex--center-y gap--xsmall">{{ icon_leaf }} {{ green_share }}% green</span>
+      <span class="label label--small flex flex--center-y gap--xsmall">{{ icon_leaf }} {{ green_share }}% green</span>
       {% endif %}
     </div>
     <div class="divider"></div>
     <div class="grid grid--cols-2 gap--medium">
       <div class="flex flex--col">
         <div class="flex flex--between flex--center-y">
-          <span class="flex flex--center-y gap--xsmall">{{ icon_solar }} Production</span>
-          <strong>{{ energy.pv_power_formatted | default: "0 W" }}</strong>
+          <span class="label label--small flex flex--center-y gap--xsmall">{{ icon_solar }} Production</span>
+          <span class="value value--small">{{ energy.pv_power_formatted | default: "0 W" }}</span>
         </div>
         <div class="flex flex--between flex--center-y">
-          <span class="flex flex--center-y gap--xsmall">{{ icon_grid }} Grid use</span>
-          <strong>{% if energy.grid_import %}{{ energy.grid_power_formatted | default: "0 W" }}{% else %}0 W{% endif %}</strong>
+          <span class="label label--small flex flex--center-y gap--xsmall">{{ icon_grid }} Grid use</span>
+          <span class="value value--small">{% if energy.grid_import %}{{ energy.grid_power_formatted | default: "0 W" }}{% else %}0 W{% endif %}</span>
         </div>
         {% if has_battery %}
         <div class="flex flex--between flex--center-y">
-          <span class="flex flex--center-y gap--xsmall">{{ icon_battery }} Battery {{ battery.soc | default: 0 }}%</span>
-          <strong>{{ battery.power_formatted | default: "0 W" }} {% if battery.charging %}&uarr;{% else %}&darr;{% endif %}</strong>
+          <span class="label label--small flex flex--center-y gap--xsmall">{{ icon_battery }} Battery {{ battery.soc | default: 0 }}%</span>
+          <span class="value value--small">{{ battery.power_formatted | default: "0 W" }} {% if battery.charging %}&uarr;{% else %}&darr;{% endif %}</span>
         </div>
         {% endif %}
       </div>
       <div class="flex flex--col">
         <div class="flex flex--between flex--center-y">
-          <span class="flex flex--center-y gap--xsmall">{{ icon_home }} Consumption</span>
-          <strong>{{ energy.home_power_formatted | default: "0 W" }}</strong>
+          <span class="label label--small flex flex--center-y gap--xsmall">{{ icon_home }} Consumption</span>
+          <span class="value value--small">{{ energy.home_power_formatted | default: "0 W" }}</span>
         </div>
         <div class="flex flex--between flex--center-y">
-          <span class="flex flex--center-y gap--xsmall">{{ icon_grid }} Grid export</span>
-          <strong>{% unless energy.grid_import %}{{ energy.grid_power_formatted | default: "0 W" }}{% else %}0 W{% endunless %}</strong>
+          <span class="label label--small flex flex--center-y gap--xsmall">{{ icon_grid }} Grid export</span>
+          <span class="value value--small">{% unless energy.grid_import %}{{ energy.grid_power_formatted | default: "0 W" }}{% else %}0 W{% endunless %}</span>
         </div>
       </div>
     </div>
@@ -92,18 +92,18 @@
     {% if lp.connected %}
     <div class="evcc-card flex flex--col gap--xsmall">
       <div class="flex flex--between flex--center-y">
-        <strong>{{ lp.title | default: "Loadpoint" }}</strong>
+        <span class="label">{{ lp.title | default: "Loadpoint" }}</span>
         {% assign lp_mode = lp.mode_label | default: lp.mode | default: "off" %}
-        <span class="evcc-mode{% if lp.charging %} evcc-mode--active{% endif %}">{{ lp_mode }}</span>
+        <span class="evcc-mode{% if lp.charging %} evcc-mode--active{% endif %} label label--small">{{ lp_mode }}</span>
       </div>
 
-      <span class="text--secondary">{{ lp.status | default: "Unknown" }}</span>
+      <span class="description">{{ lp.status | default: "Unknown" }}</span>
 
       {% if show_vehicle == "yes" and lp.vehicle_connected %}
         {% if lp.vehicle_title %}
         <div class="flex flex--between flex--center-y">
-          <span class="flex flex--center-y gap--xsmall"><strong>{{ icon_car }} {{ lp.vehicle_title }}</strong></span>
-          {% if lp.vehicle_range %}<strong>{{ lp.vehicle_range }} km</strong>{% endif %}
+          <span class="label flex flex--center-y gap--xsmall">{{ icon_car }} {{ lp.vehicle_title }}</span>
+          {% if lp.vehicle_range %}<span class="value value--small">{{ lp.vehicle_range }} km</span>{% endif %}
         </div>
         {% endif %}
 
@@ -111,7 +111,7 @@
         {% assign v_soc = lp.vehicle_soc | default: 0 | plus: 0 | round: 0 %}
         {% assign l_soc = lp.limit_soc | plus: 0 %}
         <div class="flex flex--center-y gap--small">
-          <strong>{{ v_soc }}%</strong>
+          <span class="value value--small">{{ v_soc }}%</span>
           <div class="evcc-soc-bar">
             <div class="progress-bar progress-bar--small evcc-soc-progress">
               <div class="track">
@@ -122,7 +122,7 @@
               {% endif %}
             </div>
           </div>
-          {% if l_soc > 0 and l_soc < 100 %}<strong>{{ l_soc }}%</strong>{% endif %}
+          {% if l_soc > 0 and l_soc < 100 %}<span class="value value--small">{{ l_soc }}%</span>{% endif %}
         </div>
         {% endif %}
       {% endif %}
@@ -130,32 +130,32 @@
       {% assign charged_kwh = lp.charged_energy_kwh | default: 0 | plus: 0.0 %}
       {% if lp.charging or charged_kwh > 0 %}
       <div class="flex flex--between flex--center-y">
-        <span class="flex flex--center-y gap--xsmall">{{ icon_bolt }} {% if lp.charging %}<strong>{{ lp.charge_power_formatted | default: "0 W" }}</strong>{% endif %}</span>
+        <span class="flex flex--center-y gap--xsmall">{{ icon_bolt }} {% if lp.charging %}<span class="value value--small">{{ lp.charge_power_formatted | default: "0 W" }}</span>{% endif %}</span>
         <span class="flex flex--center-y gap--xsmall">
-          <strong>{{ charged_kwh | round: 1 }} kWh</strong>
-          {% if lp.charge_duration_formatted %}&middot; {{ lp.charge_duration_formatted }}{% endif %}
+          <span class="value value--small">{{ charged_kwh | round: 1 }} kWh</span>
+          {% if lp.charge_duration_formatted %}<span class="description">&middot; {{ lp.charge_duration_formatted }}</span>{% endif %}
         </span>
       </div>
 
       <div class="flex flex--between flex--center-y">
         {% assign solar_pct = lp.session_solar_pct | default: 0 | plus: 0 %}
-        <span class="flex flex--center-y gap--xsmall">{{ icon_leaf }} {{ solar_pct }}% solar</span>
+        <span class="label label--small flex flex--center-y gap--xsmall">{{ icon_leaf }} {{ solar_pct }}% solar</span>
         {% if lp.session_price %}
-        <span>{{ lp.session_price | round: 2 }} {{ currency | default: "EUR" }}</span>
+        <span class="description">{{ lp.session_price | round: 2 }} {{ currency | default: "EUR" }}</span>
         {% endif %}
       </div>
       {% endif %}
 
       {% if lp.plan_active and lp.plan_time %}
-      <div class="flex flex--center-y gap--xsmall">{{ icon_clock }} Plan: {{ lp.plan_time }}</div>
+      <div class="description flex flex--center-y gap--xsmall">{{ icon_clock }} Plan: {{ lp.plan_time }}</div>
       {% endif %}
     </div>
     {% else %}
     <div class="flex flex--center-y gap--small">
-      <strong>{{ lp.title | default: "Loadpoint" }}</strong>
+      <span class="label">{{ lp.title | default: "Loadpoint" }}</span>
       {% assign lp_mode = lp.mode_label | default: lp.mode | default: "off" %}
-      <span class="evcc-mode">{{ lp_mode }}</span>
-      <span class="text--secondary">{{ lp.status | default: "Disconnected" }}</span>
+      <span class="evcc-mode label label--small">{{ lp_mode }}</span>
+      <span class="description">{{ lp.status | default: "Disconnected" }}</span>
     </div>
     {% endif %}
     {% endfor %}
@@ -166,15 +166,15 @@
   <div class="divider"></div>
   <div class="flex flex--center-y gap--medium no-shrink">
     {% if statistics["30d"] %}
-    <span class="flex flex--center-y gap--xsmall"><strong>30d:</strong> {{ statistics["30d"].charged_kwh | default: 0 | round: 0 }} kWh</span>
-    <span>{{ statistics["30d"].solar_pct | default: 0 | round: 0 }}% solar</span>
+    <span class="flex flex--center-y gap--xsmall"><span class="label label--small">30d:</span> <span class="value value--small">{{ statistics["30d"].charged_kwh | default: 0 | round: 0 }} kWh</span></span>
+    <span class="description">{{ statistics["30d"].solar_pct | default: 0 | round: 0 }}% solar</span>
     {% if statistics["30d"].avg_price %}
-    <span>avg {{ statistics["30d"].avg_price | round: 2 }} {{ currency | default: "EUR" }}/kWh</span>
+    <span class="description">avg {{ statistics["30d"].avg_price | round: 2 }} {{ currency | default: "EUR" }}/kWh</span>
     {% endif %}
     {% endif %}
     {% if statistics.total %}
-    <span class="flex flex--center-y gap--xsmall"><strong>Total:</strong> {{ statistics.total.charged_kwh | default: 0 | round: 0 }} kWh</span>
-    <span>{{ statistics.total.solar_pct | default: 0 | round: 0 }}% solar</span>
+    <span class="flex flex--center-y gap--xsmall"><span class="label label--small">Total:</span> <span class="value value--small">{{ statistics.total.charged_kwh | default: 0 | round: 0 }} kWh</span></span>
+    <span class="description">{{ statistics.total.solar_pct | default: 0 | round: 0 }}% solar</span>
     {% endif %}
   </div>
   {% endif %}

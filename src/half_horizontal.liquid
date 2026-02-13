@@ -39,30 +39,30 @@
       <div class="grid grid--cols-2 gap--small" style="flex: 1;">
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_solar }}</span>
-          <strong>{{ energy.pv_power_formatted | default: "--" }}</strong>
-          <span>Solar</span>
+          <span class="value value--small text--center">{{ energy.pv_power_formatted | default: "--" }}</span>
+          <span class="label label--small">Solar</span>
         </div>
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_grid }}</span>
-          <strong>{{ energy.grid_power_formatted | default: "--" }}</strong>
-          <span>Grid{% if energy.grid_import %} (Import){% else %} (Export){% endif %}</span>
+          <span class="value value--small text--center">{{ energy.grid_power_formatted | default: "--" }}</span>
+          <span class="label label--small">Grid{% if energy.grid_import %} (Import){% else %} (Export){% endif %}</span>
         </div>
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_home }}</span>
-          <strong>{{ energy.home_power_formatted | default: "--" }}</strong>
-          <span>Home</span>
+          <span class="value value--small text--center">{{ energy.home_power_formatted | default: "--" }}</span>
+          <span class="label label--small">Home</span>
         </div>
         {% if show_battery == "yes" and battery.configured %}
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_battery }}</span>
-          <strong>{{ battery.soc | default: 0 }}%</strong>
-          <span>Battery{% if battery.power_formatted %} {{ battery.power_formatted }}{% endif %}</span>
+          <span class="value value--small text--center">{{ battery.soc | default: 0 }}%</span>
+          <span class="label label--small">Battery{% if battery.power_formatted %} {{ battery.power_formatted }}{% endif %}</span>
         </div>
         {% else %}
         <div class="evcc-stat-box flex flex--col flex--center gap--xsmall p--small">
           <span>{{ icon_leaf }}</span>
-          <strong>{{ energy.green_share_home | default: 0 }}%</strong>
-          <span>Green</span>
+          <span class="value value--small text--center">{{ energy.green_share_home | default: 0 }}%</span>
+          <span class="label label--small">Green</span>
         </div>
         {% endif %}
       </div>
@@ -79,47 +79,47 @@
         {% if lp.connected %}
         <div class="evcc-card flex flex--col gap--xsmall p--small">
           <div class="flex flex--between flex--center-y">
-            <strong>{{ lp.title | default: "Loadpoint" }}</strong>
+            <span class="label">{{ lp.title | default: "Loadpoint" }}</span>
             <span class="tag{% if lp.charging %} tag--black{% endif %}">{{ lp.mode_label | default: "off" }}</span>
           </div>
           <div class="divider"></div>
           {% if show_vehicle == "yes" %}
           <div class="flex flex--center-y gap--small">
             <span>{{ icon_car }}</span>
-            <strong>{{ lp.vehicle_title | default: "Vehicle" }}</strong>
+            <span class="label">{{ lp.vehicle_title | default: "Vehicle" }}</span>
             {% if lp.vehicle_soc %}
             <div class="evcc-soc-bar">
               <div class="evcc-soc-fill" style="width: {{ lp.vehicle_soc }}%;"></div>
             </div>
-            {% assign l_soc = lp.limit_soc | plus: 0 %}<span>{{ lp.vehicle_soc | round: 0 }}%{% if l_soc > 0 and l_soc < 100 %}/{{ l_soc }}%{% endif %}</span>
+            {% assign l_soc = lp.limit_soc | plus: 0 %}<span class="value value--small">{{ lp.vehicle_soc | round: 0 }}%{% if l_soc > 0 and l_soc < 100 %}/{{ l_soc }}%{% endif %}</span>
             {% endif %}
           </div>
           {% endif %}
           <div class="flex flex--between flex--center-y">
-            <span>{{ lp.status | default: "Disconnected" }}</span>
+            <span class="description">{{ lp.status | default: "Disconnected" }}</span>
             {% if lp.charging %}
-              <strong>{{ lp.charge_power_formatted | default: "--" }}</strong>
+              <span class="value value--small">{{ lp.charge_power_formatted | default: "--" }}</span>
             {% endif %}
           </div>
           {% if lp.charging and lp.charged_energy_kwh %}
           <div class="flex flex--between flex--center-y">
-            <span>Session: {{ lp.charged_energy_kwh }} kWh</span>
+            <span class="description">Session: {{ lp.charged_energy_kwh }} kWh</span>
             {% if lp.session_solar_pct %}
-            <span>{{ icon_leaf }} {{ lp.session_solar_pct }}% solar</span>
+            <span class="label label--small">{{ icon_leaf }} {{ lp.session_solar_pct }}% solar</span>
             {% endif %}
           </div>
           {% endif %}
         </div>
         {% else %}
         <div class="evcc-card flex flex--between flex--center-y p--small" style="border-style: dotted;">
-          <strong>{{ lp.title | default: "Loadpoint" }}</strong>
-          <span>{{ lp.mode_label | default: "off" }}</span>
-          <span>Disconnected</span>
+          <span class="label">{{ lp.title | default: "Loadpoint" }}</span>
+          <span class="description">{{ lp.mode_label | default: "off" }}</span>
+          <span class="description">Disconnected</span>
         </div>
         {% endif %}
       {% endfor %}
     {% else %}
-      <div class="evcc-card p--small"><span>No loadpoints configured</span></div>
+      <div class="evcc-card p--small"><span class="description">No loadpoints configured</span></div>
     {% endif %}
   </div>
   {% endif %}
