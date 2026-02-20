@@ -35,11 +35,9 @@
 <style>
   .evcc-full { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; height: 430px; box-sizing: border-box; }
   .evcc-card { background: white; border: 1px solid black; border-radius: 8px; padding: 10px 12px; }
-  .evcc-mode { font-weight: bold; border: 1px solid black; white-space: nowrap; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px; }
-  .evcc-mode--active { background: black; color: white; }
-  .evcc-soc-bar { flex: 1; min-width: 0; }
-  .evcc-marker { position: absolute; top: -2px; width: 3px; height: 12px; background: black; }
-  .evcc-soc-progress { position: relative; overflow: visible; }
+  .evcc-soc-bar { width: 100%; height: 10px; background: #e5e5e5; border: 1px solid #999; overflow: hidden; position: relative; }
+  .evcc-soc-fill { height: 100%; background: black; }
+  .evcc-soc-limit { position: absolute; top: 0; bottom: 0; width: 2px; background: #666; }
 </style>
 
 <div class="evcc-full">
@@ -94,7 +92,7 @@
       <div class="flex flex--between flex--center-y">
         <span class="label">{{ lp.title | default: "Loadpoint" }}</span>
         {% assign lp_mode = lp.mode_label | default: lp.mode | default: "off" %}
-        <span class="evcc-mode{% if lp.charging %} evcc-mode--active{% endif %} label label--small">{{ lp_mode }}</span>
+        <span class="label label--small{% if lp.charging %} label--inverted{% else %} label--outline{% endif %}">{{ lp_mode }}</span>
       </div>
 
       <span class="description">{{ lp.status | default: "Unknown" }}</span>
@@ -110,19 +108,15 @@
         {% if lp.vehicle_soc %}
         {% assign v_soc = lp.vehicle_soc | default: 0 | plus: 0 | round: 0 %}
         {% assign l_soc = lp.limit_soc | plus: 0 %}
-        <div class="flex flex--center-y gap--small">
+        <div class="evcc-soc-bar">
+          <div class="evcc-soc-fill" style="width: {{ v_soc }}%;"></div>
+          {% if l_soc > 0 and l_soc < 100 %}
+          <div class="evcc-soc-limit" style="left: {{ l_soc }}%;"></div>
+          {% endif %}
+        </div>
+        <div class="flex flex--between">
           <span class="value value--small">{{ v_soc }}%</span>
-          <div class="evcc-soc-bar">
-            <div class="progress-bar progress-bar--small evcc-soc-progress">
-              <div class="track">
-                <div class="fill" style="width: {{ v_soc }}%;"></div>
-              </div>
-              {% if l_soc > 0 and l_soc < 100 %}
-              <div class="evcc-marker" style="left: {{ l_soc }}%;"></div>
-              {% endif %}
-            </div>
-          </div>
-          {% if l_soc > 0 and l_soc < 100 %}<span class="value value--small">{{ l_soc }}%</span>{% endif %}
+          {% if l_soc > 0 and l_soc < 100 %}<span class="description">Limit: {{ l_soc }}%</span>{% endif %}
         </div>
         {% endif %}
       {% endif %}
@@ -154,7 +148,7 @@
     <div class="flex flex--center-y gap--small">
       <span class="label">{{ lp.title | default: "Loadpoint" }}</span>
       {% assign lp_mode = lp.mode_label | default: lp.mode | default: "off" %}
-      <span class="evcc-mode label label--small">{{ lp_mode }}</span>
+      <span class="label label--small label--outline">{{ lp_mode }}</span>
       <span class="description">{{ lp.status | default: "Disconnected" }}</span>
     </div>
     {% endif %}

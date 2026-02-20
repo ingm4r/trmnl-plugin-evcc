@@ -62,7 +62,7 @@
       <div class="evcc-card flex flex--col gap--xsmall p--small">
         <div class="flex flex--between flex--center-y">
           <span class="label flex flex--center-y gap--xsmall">{{ icon_car }} {{ lp.title | default: "Loadpoint" }}</span>
-          <span class="tag{% if lp.charging %} tag--black{% endif %}">{{ lp.mode_label | default: "off" }}</span>
+          <span class="label label--small{% if lp.charging %} label--inverted{% else %} label--outline{% endif %}">{{ lp.mode_label | default: "off" }}</span>
         </div>
         <div class="divider"></div>
         <div class="flex flex--col gap--small">
@@ -104,7 +104,7 @@
       {% else %}
       <div class="evcc-card flex flex--between flex--center-y p--small" style="border-style: dotted;">
         <span class="label flex flex--center-y gap--xsmall">{{ icon_car }} {{ lp.title | default: "Loadpoint" }}</span>
-        <span class="description">{{ lp.mode_label | default: "off" }}</span>
+        <span class="label label--small label--outline">{{ lp.mode_label | default: "off" }}</span>
         <span class="description">Disconnected</span>
       </div>
       {% endif %}

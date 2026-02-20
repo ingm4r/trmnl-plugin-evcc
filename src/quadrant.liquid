@@ -41,7 +41,7 @@
     {% for lp in loadpoints %}
       {% if forloop.index > max_lps %}{% break %}{% endif %}
       <div class="evcc-lp-line flex flex--between flex--center-y p--small">
-        <span class="description flex flex--center-y gap--xsmall">{{ icon_car }} {{ lp.title | default: "Loadpoint" | truncate: 14 }}</span>
+        <span class="description flex flex--center-y gap--xsmall">{{ icon_car }} {{ lp.title | default: "Loadpoint" | truncate: 14 }} <span class="label label--small{% if lp.charging %} label--inverted{% else %} label--outline{% endif %}">{{ lp.mode_label | default: "off" }}</span></span>
         {% if lp.charging %}
           <span class="description"><strong>{{ lp.charge_power_formatted | default: "--" }}</strong></span>
         {% else %}
